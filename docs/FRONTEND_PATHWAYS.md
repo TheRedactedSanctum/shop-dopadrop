@@ -37,8 +37,9 @@ Hosted homepage, launcher and question-renderer URLs use
 `pathways-20261126` cache revision. The retired GitHub account hostname must not
 be used by a Wix controller.
 
-The legacy `/home-1` page preserves its saved portal embed when present and
-returns to `/` when that component is absent. Direct visits to the Wix Reviews
+The legacy public `/home-1` address returns to `/`; its saved portal design
+remains in the editor. A missing portal component also falls back to Home.
+Direct visits to the Wix Reviews
 confirmation page without submission query context return to
 `/reviews-collection-page`, avoiding the app's contextless `undefined` link.
 
