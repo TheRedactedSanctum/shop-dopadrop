@@ -1,4 +1,4 @@
-export const QUESTION_VIEW_URL = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-question.html?v=grimroot-20261127b';
+export const QUESTION_VIEW_URL = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-question.html?v=grimroot-names-20261127';
 
 const ACTIONS = new Set(['answer', 'encounter', 'dialogue']);
 const IDENTIFIER = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -32,6 +32,7 @@ export function bindRabbitQuestionView($w, options = {}) {
     if (Array.isArray(nativeText)) nativeText.forEach(element => {
         const text = (element.text || '').trim();
         if (/^THE (?:RABBIT HOLE|GRIMROOT TRIALS)\s*[—-]/i.test(text)
+            || ['The Forest of Poor Decisions', 'The Daily Unravelling', 'The Last Laugh Below'].includes(text)
             || text === 'The cave is sealed until all 50 hidden forest buttons are found.') element.collapse();
     });
     for (const id of ['#lootgremWho', '#lootgremReward', '#lootgremClaim', '#dailyAnswer', '#mothkeeperWait', '#rootwhisperProtect']) {

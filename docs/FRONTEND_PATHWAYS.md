@@ -133,3 +133,13 @@ Publishing, reward issuance, member-data changes and hunt-progress resets requir
 Local setup manifests are included for `RabbitHuntMembers`, `RabbitHuntGlobal` and `DopaMemberProfiles`. All collection operations are owner-only; authenticated members interact only through allowlisted web methods. The manifests document required Wix collection fields but do not create or modify live collections by themselves, so their live permissions and field types still require verification in the Wix collection manager.
 
 Every member hunt record is normalized on load and save. Missing nested state receives complete safe defaults; forest history keeps only the valid ordered encounter prefix, valid unique fragments and days, and finite non-negative bond values. Unknown dialogue nodes, reward statuses and reward choices fail closed, and claim authorization survives only on the approved reward dialogue node. This allows older or partial records to recover without granting progress or crashing daily and forest endpoints.
+
+## Encounter page names — 27 November 2026
+
+| Existing route | Player-facing name | Purpose |
+| --- | --- | --- |
+| `/rabbit-hole-forest` | The Forest of Poor Decisions | The four guardian encounters |
+| `/rabbit-hole-daily` | The Daily Unravelling | The thirty-day riddle trail |
+| `/rabbit-hole-cave` | The Last Laugh Below | The campfire and finale reward panel |
+
+The Grimroot Trials remains the hunt's title, The Unwritten Wilds remains the world, and The Forgotten Chronicle remains the prestige-unlocked Lore Book. Existing route aliases, Wix page IDs and progress records are retained. Scene headings and dashboard navigation use the new names. Match the native Wix page names, title tags and social titles to this table in the Editor before publishing; the existing slugs must remain unchanged.

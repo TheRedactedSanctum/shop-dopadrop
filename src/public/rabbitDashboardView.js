@@ -31,7 +31,7 @@
     function primaryLabel(snapshot, found) {
         switch (snapshot.nextAction) {
         case 'find_next_secret': return `Find secret ${found + 1}`;
-        case 'enter_cave': return 'Enter the cave';
+        case 'enter_cave': return 'Enter The Last Laugh Below';
         case 'talk_to_lootgrem': return 'Talk to Lootgrem';
         case 'claim_checkout_code': return 'Claim checkout treasure';
         case 'loyalty_points_unavailable': return 'Review treasure choice';

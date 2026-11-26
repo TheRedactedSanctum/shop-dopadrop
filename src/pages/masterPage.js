@@ -23,6 +23,15 @@ $w.onReady(function () {
         } catch (_) { /* the native member bar is not present on this breakpoint */ }
     }
     $w('Text').forEach(element => {
+        const pageNames = {
+            'THE RABBIT HOLE — FOREST': 'The Forest of Poor Decisions',
+            'THE RABBIT HOLE — DAILY': 'The Daily Unravelling',
+            'THE RABBIT HOLE — CAVE': 'The Last Laugh Below',
+            'Rabbit Hole Forest': 'The Forest of Poor Decisions',
+            'Rabbit Hole Daily': 'The Daily Unravelling',
+            'Rabbit Hole Cave': 'The Last Laugh Below'
+        };
+        if (pageNames[element.text?.trim()]) element.text = pageNames[element.text.trim()];
         const originalText = element.text || '';
         if (/(?:rabbit hole|rabbit warren)/i.test(originalText)) {
             element.text = originalText.replace(/(?:the\s+)?rabbit (?:hole|warren)/gi, 'The Grimroot Trials');
@@ -59,7 +68,7 @@ $w.onReady(function () {
 $w.onReady(function () {
     const rabbitWidget = $w('#html2');
     if (!rabbitWidget) return;
-    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-20261127b';
+    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-names-20261127';
     try {
         if (typeof rabbitWidget.expand === 'function') rabbitWidget.expand();
         if (typeof rabbitWidget.show === 'function') rabbitWidget.show();

@@ -24,7 +24,7 @@ $w.onReady(function () {
         if (!entry) {
             return {
                 mode: 'daily',
-                eyebrow: 'Grimroot Trials Daily',
+                eyebrow: 'The Daily Unravelling',
                 progress: { current: 0, total: 30 },
                 question: 'The next forest chronicle has not been released yet.',
                 hint: 'Return when the forest opens its next clue.',
@@ -36,7 +36,7 @@ $w.onReady(function () {
         const completed = content.completedDays.includes(entry.day);
         return {
             mode: 'daily',
-            eyebrow: `Day ${entry.day} · ${entry.title}`,
+            eyebrow: `The Daily Unravelling · Day ${entry.day} · ${entry.title}`,
             progress: { current: entry.day, total: 30 },
             question: entry.prompt,
             hint: entry.teaser,
