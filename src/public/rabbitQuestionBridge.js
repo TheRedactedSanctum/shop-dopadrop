@@ -32,7 +32,7 @@ export function bindRabbitQuestionView($w, options = {}) {
     if (Array.isArray(nativeText)) nativeText.forEach(element => {
         const text = (element.text || '').trim();
         if (/^THE (?:RABBIT HOLE|GRIMROOT TRIALS)\s*[—-]/i.test(text)
-            || ['The Forest of Poor Decisions', 'The Daily Unravelling', 'The Last Laugh Below'].includes(text)
+            || ['The Grinning Wrongwoods', 'The Omen Ledger', 'The Last Ember'].includes(text)
             || text === 'The cave is sealed until all 50 hidden forest buttons are found.') element.collapse();
     });
     for (const id of ['#lootgremWho', '#lootgremReward', '#lootgremClaim', '#dailyAnswer', '#mothkeeperWait', '#rootwhisperProtect']) {

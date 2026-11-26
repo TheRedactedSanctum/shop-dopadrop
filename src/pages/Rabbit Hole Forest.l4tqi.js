@@ -26,7 +26,7 @@ $w.onReady(function () {
             console.error('FOREST_VIEW_UNAVAILABLE');
             return {
                 mode: 'forest',
-                eyebrow: 'The Forest of Poor Decisions',
+                eyebrow: 'The Grinning Wrongwoods',
                 progress: { current: 0, total: 4 },
                 question: 'The guardian path is temporarily unavailable.',
                 hint: 'Reload this page to try the forest again.',
@@ -41,7 +41,7 @@ $w.onReady(function () {
         return {
             mode: 'forest',
             guardianKey: view.guardian?.id || '',
-            eyebrow: view.guardian ? `The Forest of Poor Decisions · Guardian ${guardianNumber} · ${view.guardian.label}` : 'The Forest of Poor Decisions',
+            eyebrow: view.guardian ? `The Grinning Wrongwoods · Guardian ${guardianNumber} · ${view.guardian.label}` : 'The Grinning Wrongwoods',
             progress: view.progress,
             question: view.prompt,
             hint: view.guardian

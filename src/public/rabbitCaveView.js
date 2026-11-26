@@ -2,7 +2,7 @@
 // all eligibility and issuance decisions remain on the authenticated backend.
 export function caveSnapshot(state = {}, dialogue, status) {
     const base = {
-        mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Laugh Below',
+        mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Ember',
         progress: { current: 0, total: 3 }, meta: ['PRIVATE MEMBER PROGRESS', 'REWARDS DISABLED']
     };
     if (!state.caveUnlocked) return {

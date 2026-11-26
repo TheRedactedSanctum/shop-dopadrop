@@ -138,8 +138,8 @@ Every member hunt record is normalized on load and save. Missing nested state re
 
 | Existing route | Player-facing name | Purpose |
 | --- | --- | --- |
-| `/rabbit-hole-forest` | The Forest of Poor Decisions | The four guardian encounters |
-| `/rabbit-hole-daily` | The Daily Unravelling | The thirty-day riddle trail |
-| `/rabbit-hole-cave` | The Last Laugh Below | The campfire and finale reward panel |
+| `/rabbit-hole-forest` | The Grinning Wrongwoods | The four guardian encounters |
+| `/rabbit-hole-daily` | The Omen Ledger | The thirty-day riddle trail |
+| `/rabbit-hole-cave` | The Last Ember | The campfire and finale reward panel |
 
 The Grimroot Trials remains the hunt's title, The Unwritten Wilds remains the world, and The Forgotten Chronicle remains the prestige-unlocked Lore Book. Existing route aliases, Wix page IDs and progress records are retained. Scene headings and dashboard navigation use the new names. Match the native Wix page names, title tags and social titles to this table in the Editor before publishing; the existing slugs must remain unchanged.
