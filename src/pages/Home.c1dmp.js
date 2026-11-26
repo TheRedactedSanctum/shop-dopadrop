@@ -16,7 +16,7 @@ $w.onReady(function () {
     // Force Wix's HTML component to load the current bridge-enabled build.
     // The cache key is intentionally bumped whenever the embedded navigation
     // contract changes so an older filesusr snapshot cannot mask the router.
-    view.src = 'https://theredactedsanctum.github.io/shop-dopadrop/?v=grimroot-names-20261127';
+    view.src = 'https://theredactedsanctum.github.io/shop-dopadrop/?v=grimroot-44-20261127';
     // Login through the shared gem must also refresh the homepage hunt gate.
     authentication.onLogin(() => view.postMessage({ type: 'RABBIT_LOGIN_RESULT', ok: true }));
     // The hunt is page-aware: the server rejects a discovery unless the

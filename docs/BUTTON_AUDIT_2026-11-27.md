@@ -63,3 +63,9 @@ The current release renames player-facing hunt text to The Grimroot Trials while
 Milestone titles unlock automatically from verified hunt progress, including Portal Peeper at 20, Chaos Cartographer at 30, DopaDetective at 40 and The Grand Gremlin at 50, and are shown in the private dashboard. These are display achievements; this change does not assign Wix security roles or change private member-page permissions.
 
 Validation before deployment: 175 automated tests passed; ESLint and git diff checks passed. Live publication and browser evidence are recorded separately after deployment. The Forest password gate, final reward configuration and full prestige/Chronicle implementation remain separate outstanding work.
+
+## Compact mark update — 27 November 2026
+
+All fifty active marks retain their original artwork: four homepage images and forty-six numbered native artwork mappings. Native and embedded hunt targets are capped at 44 by 44 CSS pixels. Native Wix button labels now use the actual `wixui-button__label` selector so saved-state text cannot cover the artwork; second-touch feedback appears above the compact target. Image controls defer to the same numbered artwork. Accessible discovery labels use The Grimroot Trials. Source/served assets share cache revision `grimroot-44-20261127`.
+
+The three native encounter page names and SEO/social titles have been saved in Wix: The Grinning Wrongwoods, The Omens Retreat and The Last Ember. Existing URL slugs are retained. Publishing and live dimension checks are recorded separately below.

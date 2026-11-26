@@ -206,18 +206,18 @@ test('native discovery signs in before protected read and recovers cancellation 
     assert.match(f.button.label, /Sign in/); assert.equal(f.counts().reads, 0);
     await f.click(); assert.equal(f.counts().reads, 0); assert.equal(f.counts().finds, 0);
     f.recover(); await f.click();
-    assert.match(f.button.label, /forest mark/); assert.equal(f.counts().finds, 0);
+    assert.match(f.button.label, /Grimroot mark/); assert.equal(f.counts().finds, 0);
     await Promise.all([f.click(), f.click()]);
     assert.equal(f.counts().challengeCalls, 1); assert.equal(f.counts().finds, 0);
     await f.click(); assert.equal(f.counts().finds, 1);
-    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6, next in order');
+    assert.equal(f.active().accessibility.ariaLabel, 'Grimroot Trials discovery 6, next in order');
 });
 
 test('native discovery state failure exposes retry without silently hiding the control', async () => {
     const f = discoveryFixture({ logged: true, failState: true });
     await f.api.bindRabbitDiscovery(f.$w);
     assert.equal(f.button.collapsed, false); assert.match(f.button.label, /Retry/);
-    f.recover(); await f.click(); assert.match(f.button.label, /forest mark/);
+    f.recover(); await f.click(); assert.match(f.button.label, /Grimroot mark/);
     assert.equal(f.counts().finds, 0);
 });
 
@@ -252,7 +252,7 @@ test('a saved discovery followed by failed refresh recovers from authoritative s
     await f.click(); await f.click();
     assert.equal(f.counts().finds, 1); assert.match(f.button.label, /Retry/);
     f.recover(); await f.click();
-    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6, next in order');
+    assert.equal(f.active().accessibility.ariaLabel, 'Grimroot Trials discovery 6, next in order');
     assert.equal(f.counts().challengeCalls, 1);
     assert.equal(f.counts().finds, 1);
 });

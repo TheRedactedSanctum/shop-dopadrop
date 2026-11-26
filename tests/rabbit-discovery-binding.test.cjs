@@ -110,8 +110,8 @@ test('all placed marks remain visible while the next mark advances and saved mar
     assert.equal(elements['#rabbitDiscovery33'].classes.has('dopa-discovery-next'), true);
     assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
     assert.equal(elements['#rabbitDiscovery33'].collapsed, false);
-    assert.equal(elements['#rabbitDiscovery33'].label, 'A tiny forest mark');
-    assert.equal(elements['#rabbitDiscovery33'].accessibility.ariaLabel, 'Hidden forest discovery 33, next in order');
+    assert.equal(elements['#rabbitDiscovery33'].label, 'A Grimroot mark');
+    assert.equal(elements['#rabbitDiscovery33'].accessibility.ariaLabel, 'Grimroot Trials discovery 33, next in order');
 });
 
 test('binder activates clickable image elements without writing a button label', async () => {
@@ -129,7 +129,7 @@ test('binder activates clickable image elements without writing a button label',
 
     assert.equal(result.bound, true);
     assert.equal(image.collapsed, false);
-    assert.equal(image.accessibility.ariaLabel, 'Hidden forest discovery 32, next in order');
+    assert.equal(image.accessibility.ariaLabel, 'Grimroot Trials discovery 32, next in order');
     assert.equal(typeof image.clickHandler, 'function');
 });
 
@@ -188,7 +188,7 @@ test('a Wix router prefix is included when binding category discoveries', async 
     const result = await bind($w);
     assert.equal(result.bound, true);
     assert.equal(result.route, route);
-    assert.equal(elements['#rabbitDiscoveryHeading'].accessibility.ariaLabel, 'Hidden forest discovery 5, next in order');
+    assert.equal(elements['#rabbitDiscoveryHeading'].accessibility.ariaLabel, 'Grimroot Trials discovery 5, next in order');
 });
 
 test('a missing future category control does not disable the currently placed discovery', async () => {
@@ -234,7 +234,7 @@ test('signed-out native routes expose one sign-in slot and activate it after log
     assert.equal(loginPrompts, 0);
     await elements['#rabbitDiscovery32'].clickHandler();
     assert.equal(loginPrompts, 1);
-    assert.equal(elements['#rabbitDiscovery32'].label, 'A tiny forest mark');
+    assert.equal(elements['#rabbitDiscovery32'].label, 'A Grimroot mark');
 });
 
 test('missing current page-local control fails closed with the exact editor ID', async () => {

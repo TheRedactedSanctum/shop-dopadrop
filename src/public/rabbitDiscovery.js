@@ -81,10 +81,10 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 activeButtonId = slot.buttonId;
                 slot.button.customClassList?.add('dopa-discovery-next');
             }
-            setLabel(slot, found ? 'Discovery saved' : 'A tiny forest mark');
+            setLabel(slot, found ? 'Grimroot mark saved' : 'A Grimroot mark');
             if (slot.button.accessibility) slot.button.accessibility.ariaLabel = found
-                ? `Forest discovery ${slot.buttonId}, already saved`
-                : `Hidden forest discovery ${slot.buttonId}${next ? ', next in order' : ', waiting for earlier discoveries'}`;
+                ? `Grimroot Trials discovery ${slot.buttonId}, already saved`
+                : `Grimroot Trials discovery ${slot.buttonId}${next ? ', next in order' : ', waiting for earlier discoveries'}`;
             slot.button.expand();
         });
         return slots.find(slot => slot.buttonId === activeButtonId) || null;
@@ -94,7 +94,7 @@ export async function bindRabbitDiscovery($w, options = {}) {
     if (!availableSlots.length) {
         return { bound: false, reason: 'EDITOR_ELEMENT_MISSING', missingElementId: slots[0]?.elementId, route };
     }
-    const signInSlot = () => expose(availableSlots[0], 'Sign in to begin the hidden hunt', 'Sign in to begin the hidden hunt');
+    const signInSlot = () => expose(availableSlots[0], 'Sign in to enter The Grimroot Trials', 'Sign in to enter The Grimroot Trials');
     const retrySlot = (preferred, message) => {
         activeButtonId = null;
         challenges.clear();
@@ -105,8 +105,8 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 candidate.button.expand();
             });
             slot.button.customClassList?.add('dopa-discovery-touched');
-            setLabel(slot, 'Retry loading the hidden hunt');
-        } else expose(slot, 'Retry loading the hidden hunt', 'Retry loading the hidden hunt');
+            setLabel(slot, 'Retry loading The Grimroot Trials');
+        } else expose(slot, 'Retry loading The Grimroot Trials', 'Retry loading The Grimroot Trials');
         setStatus(slot, message);
         return slot;
     };

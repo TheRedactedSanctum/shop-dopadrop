@@ -142,4 +142,4 @@ Every member hunt record is normalized on load and save. Missing nested state re
 | `/rabbit-hole-daily` | The Omens Retreat | The thirty-day riddle trail |
 | `/rabbit-hole-cave` | The Last Ember | The campfire and finale reward panel |
 
-The Grimroot Trials remains the hunt's title, The Unwritten Wilds remains the world, and The Forgotten Chronicle remains the prestige-unlocked Lore Book. Existing route aliases, Wix page IDs and progress records are retained. Scene headings and dashboard navigation use the new names. Match the native Wix page names, title tags and social titles to this table in the Editor before publishing; the existing slugs must remain unchanged.
+The Grimroot Trials remains the hunt's title, The Unwritten Wilds remains the world, and The Forgotten Chronicle remains the prestige-unlocked Lore Book. Existing route aliases, Wix page IDs and progress records are retained. Scene headings and dashboard navigation use the new names. The native Wix page names, title tags and inherited social titles were matched to this table in the Editor on 27 November 2026. Existing slugs were retained; live publication is verified separately.
