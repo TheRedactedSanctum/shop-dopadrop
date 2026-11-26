@@ -75,6 +75,11 @@ test('the legacy portal returns visitors to Home when its saved embed is absent'
     assert.deepEqual(app.navigated, ['/']);
 });
 
+test('the published legacy homepage alias reaches Home even when its broken embed exists', () => {
+    const app = pageHarness('src/pages/Home - portal goblin.loevn.js', { locationPath: ['home-1'] });
+    assert.deepEqual(app.navigated, ['/']);
+});
+
 test('a direct review confirmation visit has a real reviews destination', () => {
     const app = pageHarness('src/pages/Thank You Page.ct1pt.js');
     assert.deepEqual(app.navigated, ['/reviews-collection-page']);

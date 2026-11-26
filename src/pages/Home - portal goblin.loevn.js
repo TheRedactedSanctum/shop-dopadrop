@@ -5,6 +5,12 @@ import { authentication } from 'wix-members-frontend';
 // Navigation bridge for the saved Home - portal goblin draft embed.
 // Do not replace its source with a shared live asset. Catalogue access is read-only.
 $w.onReady(function () {
+    // The obsolete public alias contains a duplicate-script embed. Keep that
+    // saved design in the editor, but send visitors to the canonical Home.
+    if (wixLocationFrontend.path.join('/') === 'home-1') {
+        wixLocationFrontend.to('/');
+        return;
+    }
     let view;
     try { view = $w('#html1'); } catch (_) { /* the legacy embed was removed from the published page */ }
     if (!view || typeof view.onMessage !== 'function') {
