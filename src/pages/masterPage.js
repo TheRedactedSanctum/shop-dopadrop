@@ -25,10 +25,10 @@ $w.onReady(function () {
     $w('Text').forEach(element => {
         const pageNames = {
             'THE RABBIT HOLE — FOREST': 'The Grinning Wrongwoods',
-            'THE RABBIT HOLE — DAILY': 'The Omen Ledger',
+            'THE RABBIT HOLE — DAILY': 'The Omens Retreat',
             'THE RABBIT HOLE — CAVE': 'The Last Ember',
             'Rabbit Hole Forest': 'The Grinning Wrongwoods',
-            'Rabbit Hole Daily': 'The Omen Ledger',
+            'Rabbit Hole Daily': 'The Omens Retreat',
             'Rabbit Hole Cave': 'The Last Ember'
         };
         if (pageNames[element.text?.trim()]) element.text = pageNames[element.text.trim()];

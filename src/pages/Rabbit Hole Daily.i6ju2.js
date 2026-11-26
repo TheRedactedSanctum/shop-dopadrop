@@ -24,7 +24,7 @@ $w.onReady(function () {
         if (!entry) {
             return {
                 mode: 'daily',
-                eyebrow: 'The Omen Ledger',
+                eyebrow: 'The Omens Retreat',
                 progress: { current: 0, total: 30 },
                 question: 'The next forest chronicle has not been released yet.',
                 hint: 'Return when the forest opens its next clue.',
@@ -36,7 +36,7 @@ $w.onReady(function () {
         const completed = content.completedDays.includes(entry.day);
         return {
             mode: 'daily',
-            eyebrow: `The Omen Ledger · Day ${entry.day} · ${entry.title}`,
+            eyebrow: `The Omens Retreat · Day ${entry.day} · ${entry.title}`,
             progress: { current: entry.day, total: 30 },
             question: entry.prompt,
             hint: entry.teaser,
