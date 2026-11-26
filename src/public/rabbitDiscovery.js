@@ -24,6 +24,10 @@ function statusElementId(elementId) {
 }
 
 export async function bindRabbitDiscovery($w, options = {}) {
+    for (const id of ['rabbitDiscoveryButton', 'rabbitDiscoveryRetired1', 'rabbitDiscoveryRetired2']) {
+        const retired = optionalElement($w, `#${id}`);
+        if (typeof retired?.collapse === 'function') retired.collapse();
+    }
     const route = currentRoute();
     const placements = placementsForRoute(route);
     const physicalButtons = new Map(elementIdsForRoute(route).map(elementId => [
@@ -37,6 +41,9 @@ export async function bindRabbitDiscovery($w, options = {}) {
         button: physicalButtons.get(placement.elementId),
         status: optionalElement($w, `#${statusElementId(placement.elementId)}`)
     }));
+    slots.forEach(slot => {
+        slot.button?.customClassList?.add('dopa-discovery', `dopa-discovery-${slot.buttonId}`);
+    });
     const challenges = new Map();
     let activeButtonId = null;
     let inFlight = false;
@@ -46,6 +53,8 @@ export async function bindRabbitDiscovery($w, options = {}) {
     };
     const setLabel = (slot, label) => {
         if (slot && typeof slot.button.label === 'string') slot.button.label = label;
+        if (label === 'A tiny forest mark') slot.button?.customClassList?.remove('dopa-discovery-touched');
+        else slot.button?.customClassList?.add('dopa-discovery-touched');
     };
     const expose = (slot, label, ariaLabel) => {
         collapseAll();
@@ -115,6 +124,7 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 const challenge = challenges.get(slot.buttonId);
                 if (!challenge) {
                     challenges.set(slot.buttonId, await beginButtonChallenge(slot.buttonId, route));
+                    setLabel(slot, 'Touch the mark again');
                     setStatus(slot, 'The mark stirred. Touch it once more.');
                     return;
                 }

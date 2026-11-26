@@ -94,6 +94,7 @@ test('binder advances between distinct physical slots on the same route', async 
 
     await elements['#rabbitDiscovery32'].clickHandler();
     assert.deepEqual(foundCalls, []);
+    assert.equal(elements['#rabbitDiscovery32'].label, 'Touch the mark again');
     await elements['#rabbitDiscovery32'].clickHandler();
 
     assert.deepEqual(foundCalls, [[32, '/about', 'token-32']]);
@@ -246,4 +247,17 @@ test('a missing future page-local control does not disable the current discovery
     assert.equal(result.buttonId, 32);
     assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
     assert.equal(elements['#rabbitDiscovery34'].collapsed, true);
+});
+
+test('obsolete and retired placeholders stay hidden without affecting the active discovery', async () => {
+    const { elements, $w } = makeWixElements([
+        'rabbitDiscovery32', 'rabbitDiscoveryButton',
+        'rabbitDiscoveryRetired1', 'rabbitDiscoveryRetired2'
+    ]);
+    const result = await loadBinder(baseDeps())($w);
+    assert.equal(result.buttonId, 32);
+    assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
+    for (const id of ['rabbitDiscoveryButton', 'rabbitDiscoveryRetired1', 'rabbitDiscoveryRetired2']) {
+        assert.equal(elements[`#${id}`].collapsed, true);
+    }
 });

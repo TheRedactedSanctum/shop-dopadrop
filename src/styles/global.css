@@ -69,3 +69,58 @@ form[aria-label="Contact us"] input::placeholder, form[aria-label="Contact us"] 
 form[aria-label="Contact us"] label { color:#f4f4ef !important; }
 form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"] textarea:focus-visible { outline:3px solid #f5ff37 !important; outline-offset:3px !important; }
 .dopa-brand.dopa-native-text p, .dopa-brand.dopa-native-text h1, .dopa-brand.dopa-native-text h2 { color:#f5ff37 !important; }
+
+/* Restore the original numbered hunt artwork on native page controls. */
+.dopa-discovery { min-width:64px !important; min-height:64px !important; width:80px !important; height:80px !important; z-index:3; }
+.dopa-discovery button, .dopa-discovery a { width:100% !important; height:100% !important; background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
+.dopa-discovery .wixui-button__label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.dopa-discovery:focus-within { outline:3px solid #f5ff37; outline-offset:5px; }
+.dopa-discovery.dopa-discovery-touched .wixui-button__label { position:static; display:block; width:auto; height:auto; margin:0; overflow:visible; clip-path:none; white-space:normal; background:#09090de6; color:#f5ff37 !important; padding:4px; font-size:12px; }
+@keyframes dopa-discovery-drift { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-6px) rotate(3deg); } }
+@media(prefers-reduced-motion:reduce) { .dopa-discovery button, .dopa-discovery a { animation:none !important; } }
+.dopa-discovery-5 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png"); }
+.dopa-discovery-6 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_4c28d07e86a74124bf1478b846140204~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_4c28d07e86a74124bf1478b846140204~mv2.png"); }
+.dopa-discovery-7 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_7fdad835729a4ef8aa85af9a8c1a0383~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_7fdad835729a4ef8aa85af9a8c1a0383~mv2.png"); }
+.dopa-discovery-8 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d311ba0010e64347b1a9268a6cff0f88~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d311ba0010e64347b1a9268a6cff0f88~mv2.png"); }
+.dopa-discovery-9 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_5ee42c8bc76f414a840c794489f075ef~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_5ee42c8bc76f414a840c794489f075ef~mv2.png"); }
+.dopa-discovery-10 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_e6338ae661914f498d5bae2b62b111a1~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_e6338ae661914f498d5bae2b62b111a1~mv2.png"); }
+.dopa-discovery-11 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_e6d890f0fbc64eedacdfc720ef6857e1~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_e6d890f0fbc64eedacdfc720ef6857e1~mv2.png"); }
+.dopa-discovery-12 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_317abae3aabf440ba109e84d6f425ad1~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_317abae3aabf440ba109e84d6f425ad1~mv2.png"); }
+.dopa-discovery-13 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_fb634d451cc44b3dba13424411b14fa4~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_fb634d451cc44b3dba13424411b14fa4~mv2.png"); }
+.dopa-discovery-14 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_bdb9a956153b4f62b76c6ae5476c49cf~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_bdb9a956153b4f62b76c6ae5476c49cf~mv2.png"); }
+.dopa-discovery-15 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_ab85ea50e98844208690288f788bc108~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_ab85ea50e98844208690288f788bc108~mv2.png"); }
+.dopa-discovery-16 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_060cc08dec52497c93e89ff7951c550a~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_060cc08dec52497c93e89ff7951c550a~mv2.png"); }
+.dopa-discovery-17 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_eb13efb7a22a473482da7e771d6102b0~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_eb13efb7a22a473482da7e771d6102b0~mv2.png"); }
+.dopa-discovery-18 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_0f7d17fd88de417aad2b514c34a2722c~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_0f7d17fd88de417aad2b514c34a2722c~mv2.png"); }
+.dopa-discovery-19 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_9b0a28b24d2b47a2af9ce9ab66a5d863~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_9b0a28b24d2b47a2af9ce9ab66a5d863~mv2.png"); }
+.dopa-discovery-20 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_19216632a5f24d4b85a8df432e9b05b6~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_19216632a5f24d4b85a8df432e9b05b6~mv2.png"); }
+.dopa-discovery-21 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_9af56db8f5c749909be4d262e6028a4e~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_9af56db8f5c749909be4d262e6028a4e~mv2.png"); }
+.dopa-discovery-22 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_48eda35f79a54dc7b802508f1be8cd27~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_48eda35f79a54dc7b802508f1be8cd27~mv2.png"); }
+.dopa-discovery-23 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_6c8c9e7e9d7640b9a12319bd10cadaaa~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_6c8c9e7e9d7640b9a12319bd10cadaaa~mv2.png"); }
+.dopa-discovery-24 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png"); }
+.dopa-discovery-25 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d8dfca175c7241e1a9cc6c5085d1d9b6~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d8dfca175c7241e1a9cc6c5085d1d9b6~mv2.png"); }
+.dopa-discovery-26 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d4a24d6cf7b9446dafa3ee7f7f859348~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d4a24d6cf7b9446dafa3ee7f7f859348~mv2.png"); }
+.dopa-discovery-27 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_3f98909c5caf4876a1915eec001f8605~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_3f98909c5caf4876a1915eec001f8605~mv2.png"); }
+.dopa-discovery-28 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_fb634d451cc44b3dba13424411b14fa4~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_fb634d451cc44b3dba13424411b14fa4~mv2.png"); }
+.dopa-discovery-29 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d311ba0010e64347b1a9268a6cff0f88~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d311ba0010e64347b1a9268a6cff0f88~mv2.png"); }
+.dopa-discovery-30 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_aa90d14cb0ab46f3bacbde6cf7f622ad~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_aa90d14cb0ab46f3bacbde6cf7f622ad~mv2.png"); }
+.dopa-discovery-31 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_fbb39f2ceadd4578b2cc99bdb2dd35ad~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_fbb39f2ceadd4578b2cc99bdb2dd35ad~mv2.png"); }
+.dopa-discovery-32 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_8ea9b8b57e8545c2b3c60143e2179f26~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_8ea9b8b57e8545c2b3c60143e2179f26~mv2.png"); }
+.dopa-discovery-33 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_442855686b0b43d2b656d40a2c058a7a~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_442855686b0b43d2b656d40a2c058a7a~mv2.png"); }
+.dopa-discovery-34 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_6c8c9e7e9d7640b9a12319bd10cadaaa~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_6c8c9e7e9d7640b9a12319bd10cadaaa~mv2.png"); }
+.dopa-discovery-35 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_672f1ffdecce4be7abfd225ab3884e4c~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_672f1ffdecce4be7abfd225ab3884e4c~mv2.png"); }
+.dopa-discovery-36 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_ed967d8b139047eb91d48304eda9174d~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_ed967d8b139047eb91d48304eda9174d~mv2.png"); }
+.dopa-discovery-37 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_c4e22c63539a4a0da88b6edf517718c9~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_c4e22c63539a4a0da88b6edf517718c9~mv2.png"); }
+.dopa-discovery-38 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_5ea7b29cca07463c94020156ee022f9d~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_5ea7b29cca07463c94020156ee022f9d~mv2.png"); }
+.dopa-discovery-39 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_0f7d17fd88de417aad2b514c34a2722c~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_0f7d17fd88de417aad2b514c34a2722c~mv2.png"); }
+.dopa-discovery-40 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_b7812e7817234021a1f5436e0f9a5eba~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_b7812e7817234021a1f5436e0f9a5eba~mv2.png"); }
+.dopa-discovery-41 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d8ac60059d3d48048ba2309077369b79~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d8ac60059d3d48048ba2309077369b79~mv2.png"); }
+.dopa-discovery-42 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_bdb9a956153b4f62b76c6ae5476c49cf~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_bdb9a956153b4f62b76c6ae5476c49cf~mv2.png"); }
+.dopa-discovery-43 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_ed967d8b139047eb91d48304eda9174d~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_ed967d8b139047eb91d48304eda9174d~mv2.png"); }
+.dopa-discovery-44 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_d810858fc6854eafa5ef8eed141b5f7b~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_d810858fc6854eafa5ef8eed141b5f7b~mv2.png"); }
+.dopa-discovery-45 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_be2766a9f3e0434aada39b0589017636~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_be2766a9f3e0434aada39b0589017636~mv2.png"); }
+.dopa-discovery-46 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png"); }
+.dopa-discovery-47 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_91ddecef06c04ca9bf8c0b2e6589f908~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_91ddecef06c04ca9bf8c0b2e6589f908~mv2.png"); }
+.dopa-discovery-48 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png"); }
+.dopa-discovery-49 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png"); }
+.dopa-discovery-50 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png"); }
