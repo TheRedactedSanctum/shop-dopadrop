@@ -59,7 +59,7 @@ $w.onReady(function () {
 $w.onReady(function () {
     const rabbitWidget = $w('#html2');
     if (!rabbitWidget) return;
-    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-20261127';
+    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-20261127b';
     try {
         if (typeof rabbitWidget.expand === 'function') rabbitWidget.expand();
         if (typeof rabbitWidget.show === 'function') rabbitWidget.show();
