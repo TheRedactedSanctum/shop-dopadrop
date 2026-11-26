@@ -16,7 +16,7 @@ $w.onReady(function () {
     // Force Wix's HTML component to load the current bridge-enabled build.
     // The cache key is intentionally bumped whenever the embedded navigation
     // contract changes so an older filesusr snapshot cannot mask the router.
-    view.src = 'https://brokenbondsfallsilent-png.github.io/shop-dopadrop/?v=rabbit50-20261029';
+    view.src = 'https://theredactedsanctum.github.io/shop-dopadrop/?v=pathways-20261126';
     // Login through the shared gem must also refresh the homepage hunt gate.
     authentication.onLogin(() => view.postMessage({ type: 'RABBIT_LOGIN_RESULT', ok: true }));
     // The hunt is page-aware: the server rejects a discovery unless the
@@ -47,8 +47,9 @@ $w.onReady(function () {
         '/category/focus-calm-tools', '/category/stim-toys-squishies',
         '/category/sensory-kits-bundles', '/category/movement-balance',
         '/category/all-products', '/category/best-sellers', '/category/puzzles-hands-on-play', '/gift-card', '/search',
-        '/about', '/contact', '/blog', '/cart-page', '/profile/my/profile', '/shipping-policy', '/refund-policy',
-        '/privacy-policy', '/terms-and-conditions', '/accessibility-statement'
+        '/', '/about', '/contact', '/blog', '/cart-page', '/account-settings', '/shipping-policy', '/refund-policy',
+        '/privacy-policy', '/terms-and-conditions', '/accessibility-statement', '/loyalty', '/my-rewards',
+        '/rabbit-hole-cave', '/rabbit-hole-forest', '/rabbit-hole-daily', '/event-list', '/reviews-collection-page'
     ]);
     // These are the exact fallback cards embedded in the saved homepage.
     // Keep their links usable before, or if, the catalogue request completes.
@@ -62,6 +63,17 @@ $w.onReady(function () {
         "/product-page/sdd-021-shining-led-fidget-spinner-021",
         "/product-page/shop-dopadrop-sdd-208"
     ].forEach(path => allowedPaths.add(path));
+    function storefrontPath(value) {
+        if (typeof value !== 'string' || !value.trim() || value.startsWith('//') || value.includes('\\')) return '';
+        try {
+            const url = new URL(value, 'https://www.shop--dopadrop.com.au');
+            if (url.origin !== 'https://www.shop--dopadrop.com.au') return '';
+            if (url.pathname === '/profile/my/profile') return '/account-settings';
+            return url.pathname + url.search + url.hash;
+        } catch (_) {
+            return '';
+        }
+    }
     function mediaUrl(value) {
         if (!value) return '';
         if (value.startsWith('https://')) return value;
@@ -83,7 +95,7 @@ $w.onReady(function () {
             name: p.name,
             price: p.formattedDiscountedPrice || p.formattedPrice || '',
             image: mediaUrl(p.mainMedia),
-            url: typeof p.productPageUrl === 'string' ? p.productPageUrl : ''
+            url: storefrontPath(p.productPageUrl)
         }));
         products.forEach(p => { if (p.url.startsWith('/product-page/')) allowedPaths.add(p.url); });
         const collections = results[1].status === 'fulfilled'
@@ -118,8 +130,9 @@ $w.onReady(function () {
             catalogPromise = catalogPromise || loadCatalogue();
             view.postMessage(await catalogPromise);
         }
-        if (data?.type === 'SHOP_DOPA_NAVIGATE' && typeof data.path === 'string' && allowedPaths.has(data.path)) {
-            wixLocationFrontend.to(data.path);
+        if (data?.type === 'SHOP_DOPA_NAVIGATE') {
+            const path = storefrontPath(data.path);
+            if (allowedPaths.has(path)) wixLocationFrontend.to(path);
         }
         if (data?.type === 'RABBIT_HOLE_REQUEST' && typeof data.requestId === 'string') {
             const actions = {
@@ -137,7 +150,11 @@ $w.onReady(function () {
         }
         if (data?.type === 'RABBIT_LOGIN_REQUEST') {
             try {
-                await authentication.promptLogin();
+                if (!authentication.loggedIn()) await authentication.promptLogin();
+                if (data.intent === 'account') {
+                    wixLocationFrontend.to('/account-settings');
+                    return;
+                }
                 view.postMessage({ type: 'RABBIT_LOGIN_RESULT', ok: true });
             } catch (error) {
                 view.postMessage({ type: 'RABBIT_LOGIN_RESULT', ok: false, error: error?.message || 'LOGIN_CANCELLED' });

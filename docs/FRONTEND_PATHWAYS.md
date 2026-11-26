@@ -23,9 +23,24 @@ Secondary discovery routes are Shop All, Best Sellers, Search, Gift Card and Jou
 
 ### Account
 
-`Home -> Account -> Wix member profile and orders`
+`Home -> Account -> Wix sign-in when needed -> /account-settings -> native member navigation`
 
-The embedded header owns one Account link. Duplicate native member bars are removed by `masterPage.js`. Authentication remains Wix-owned.
+The public `/profile/my/profile` placeholder is not a real member slug. Account
+links and the completed-hunt dashboard use `/account-settings`; the legacy
+placeholder redirects there while genuine public member-profile routes remain
+Wix-owned. A hunt sign-in refreshes the current hunt without navigating away.
+
+The embedded header owns one Account link. Duplicate native member bars are removed by `masterPage.js`. Authentication remains Wix-owned. Catalogue URLs from the same storefront origin are normalized to local paths before allowlist checks. Missing catalogue URLs retain the verified featured-product fallback.
+
+Hosted homepage, launcher and question-renderer URLs use
+`https://theredactedsanctum.github.io/shop-dopadrop/` with the
+`pathways-20261126` cache revision. The retired GitHub account hostname must not
+be used by a Wix controller.
+
+The legacy `/home-1` page preserves its saved portal embed when present and
+returns to `/` when that component is absent. Direct visits to the Wix Reviews
+confirmation page without submission query context return to
+`/reviews-collection-page`, avoiding the app's contextless `undefined` link.
 
 The member-only `getMyRabbitDashboard` backend method supplies a single read-only dashboard snapshot built from the authenticated member's live hunt record and private DopaVerse profile. It includes rank, XP, selected and unlocked titles, current hunt percentage, next assigned secret/page, forest and daily completion counts, safe reward status, next recommended action and stable route pathways.
 

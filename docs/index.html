@@ -64,7 +64,7 @@ function render(data={products:[],collections:[]}){
  document.getElementById('collectionsGrid').replaceChildren();
  catalogueFeatures.forEach((feature,index)=>{
   const live=(data.products||[]).find(p=>p.url===feature.url||p.name===feature.name);
-  const p=live?{...feature,...live}:feature;
+  const p=live?{...feature,...live,url:live.url||feature.url}:feature;
   const c=el('article','card'); c.style.setProperty('--accent',['#FF00AA','#B6FF00','#00F0FF','#7A00FF'][index%4]);
   const im=el('img');im.src=p.image;im.alt=p.name;im.loading='lazy';im.style.objectFit='contain';im.style.background='#fff';c.append(im);
   c.append(el('div','tag',feature.tag),el('h3','',p.name),el('div','price',p.price),el('p','',feature.copy));
@@ -82,7 +82,7 @@ function render(data={products:[],collections:[]}){
  if(data.minPrice)document.getElementById('minPrice').textContent=data.minPrice;
  if(data.loaded)document.getElementById('catalogStatus').textContent='';
 }
-function setRouteLinks(){document.querySelectorAll('[data-route]').forEach(a=>{const route=a.dataset.route;a.removeAttribute('target');if(route==='/profile/my/profile'){a.href=STOREFRONT_ORIGIN;a.onclick=event=>{if(window.parent===window)return true;event.preventDefault();send({type:'RABBIT_LOGIN_REQUEST'});return false};return}a.href=storefrontHref(route);a.onclick=event=>{if(window.parent===window)return true;event.preventDefault();send({type:'SHOP_DOPA_NAVIGATE',path:route});return false}})}
+function setRouteLinks(){document.querySelectorAll('[data-route]').forEach(a=>{const route=a.dataset.route;a.removeAttribute('target');if(route==='/profile/my/profile'){a.href=storefrontHref('/account-settings');a.onclick=event=>{if(window.parent===window)return true;event.preventDefault();send({type:'RABBIT_LOGIN_REQUEST',intent:'account'});return false};return}a.href=storefrontHref(route);a.onclick=event=>{if(window.parent===window)return true;event.preventDefault();send({type:'SHOP_DOPA_NAVIGATE',path:route});return false}})}
 render();setRouteLinks();window.addEventListener('message',e=>{if(e.source!==parent||e.data?.type!=='SHOP_DOPA_CATALOG')return;render(e.data);setRouteLinks()});window.addEventListener('load',()=>send({type:'SHOP_DOPA_READY'}));
 </script><script>
 const rabbitPending=new Map();let rabbitState={foundIds:[],found:0,required:50,caveUnlocked:false};let rabbitChallenge=null;

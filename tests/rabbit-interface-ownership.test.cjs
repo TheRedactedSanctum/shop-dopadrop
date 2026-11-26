@@ -30,8 +30,8 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const masterSource = read('src/pages/masterPage.js');
     const homeSource = read('src/pages/Home.c1dmp.js');
 
-    assert.match(masterSource, /rabbit-widget\.html\?v=rabbit50-20261029/);
-    assert.match(homeSource, /shop-dopadrop\/\?v=rabbit50-20261029/);
+    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=pathways-20261126/);
+    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=pathways-20261126/);
 });
 
 test('the embedded Home header owns one account link and native member bars are removed', () => {
@@ -291,7 +291,8 @@ test('the embedded Account control opens Wix login instead of navigating to a de
 
     for (const html of [source, servedSource]) {
         assert.match(html, /route==='\/profile\/my\/profile'/);
-        assert.match(html, /a\.href=STOREFRONT_ORIGIN/);
+        assert.match(html, /a\.href=storefrontHref\('\/account-settings'\)/);
+        assert.match(html, /send\(\{type:'RABBIT_LOGIN_REQUEST',intent:'account'\}\)/);
         assert.match(html, /send\(\{type:'RABBIT_LOGIN_REQUEST'\}\)/);
     }
 });

@@ -46,7 +46,7 @@ test('the dashboard combines member identity with live hunt progress and pathway
     assert.equal(dashboard.forest.completedEncounters, 1);
     assert.equal(dashboard.forest.collectedFragments, 2);
     assert.deepEqual(dashboard.pathways, {
-        hunt: '/', forest: '/rabbit-hole-forest', daily: '/rabbit-hole-daily', cave: '/rabbit-hole-cave', account: '/profile/my/profile'
+        hunt: '/', forest: '/rabbit-hole-forest', daily: '/rabbit-hole-daily', cave: '/rabbit-hole-cave', account: '/account-settings'
     });
 });
 

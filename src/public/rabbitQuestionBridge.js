@@ -1,4 +1,4 @@
-export const QUESTION_VIEW_URL = 'https://brokenbondsfallsilent-png.github.io/shop-dopadrop/rabbit-question.html?v=questions-20261030';
+export const QUESTION_VIEW_URL = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-question.html?v=pathways-20261126';
 
 const ACTIONS = new Set(['answer', 'encounter', 'dialogue']);
 const IDENTIFIER = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
