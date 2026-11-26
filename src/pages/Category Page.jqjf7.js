@@ -6,7 +6,14 @@ $w.onReady(() => {
     // Keep the obsolete single-slot control recoverable in the Editor, but never
     // let it overlap the page-local Heading/Grid/Footer discovery controls.
     try { $w('#rabbitDiscoveryButton').collapse(); } catch (_) { /* legacy control already removed */ }
-    return bindRabbitDiscovery($w);
+    return bindRabbitDiscovery($w).then(result => {
+        console.info('Rabbit discovery binding:', JSON.stringify({
+            ...result,
+            prefix: wixLocationFrontend.prefix,
+            path: wixLocationFrontend.path
+        }));
+        return result;
+    }).catch(error => console.error('Rabbit discovery binding failed:', error));
 });
 
 $w.onReady(function () {
