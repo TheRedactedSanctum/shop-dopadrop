@@ -47,7 +47,7 @@ $w.onReady(function () {
 $w.onReady(function () {
     const rabbitWidget = $w('#html2');
     if (!rabbitWidget) return;
-    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=pathways-20261126';
+    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=buttons-20261127';
     try {
         if (typeof rabbitWidget.expand === 'function') rabbitWidget.expand();
         if (typeof rabbitWidget.show === 'function') rabbitWidget.show();
@@ -61,7 +61,7 @@ $w.onReady(function () {
         });
         try {
             if (data.action === 'sign-in') {
-                await authentication.promptLogin();
+                if (!authentication.loggedIn()) await authentication.promptLogin();
                 rabbitWidget.postMessage({
                     type: 'RABBIT_WIDGET_RESULT', action: 'dashboard', ok: true,
                     payload: await getMyRabbitDashboard()

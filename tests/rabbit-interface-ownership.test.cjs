@@ -30,7 +30,7 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const masterSource = read('src/pages/masterPage.js');
     const homeSource = read('src/pages/Home.c1dmp.js');
 
-    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=pathways-20261126/);
+    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=buttons-20261127/);
     assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=pathways-20261126/);
 });
 
@@ -198,7 +198,7 @@ test('the member dashboard renders when window.status is the browser status stri
             addEventListener: (type, listener) => { listeners[type] = listener; }
         },
         RabbitDashboardView: {
-            buildDashboardView: () => ({
+            buildDashboardView: snapshot => snapshot ? ({
                 signedIn: true,
                 rank: 'Trail Starter',
                 identity: 'Dylan',
@@ -209,7 +209,7 @@ test('the member dashboard renders when window.status is the browser status stri
                 reward: 'Treasure locked',
                 primary: { label: 'Continue the hunt' },
                 percent: 4
-            })
+            }) : ({ signedIn: false })
         }
     };
 
@@ -222,6 +222,12 @@ test('the member dashboard renders when window.status is the browser status stri
     assert.equal(elements.dashboard.classList.contains('loading'), false);
     assert.equal(elements.status.textContent, 'DopaHQ ready.');
     assert.equal(elements.rank.textContent, 'Trail Starter');
+    assert.equal(elements.login.hidden, true);
+    listeners.message({
+        source: parent,
+        data: { type: 'RABBIT_WIDGET_RESULT', action: 'dashboard', ok: false, error: 'MEMBER_LOGIN_REQUIRED' }
+    });
+    assert.equal(elements.login.hidden, false);
 });
 
 test('source and served mobile decoration bands clip transformed artwork', () => {

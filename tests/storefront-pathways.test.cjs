@@ -55,6 +55,26 @@ test('a hunt sign-in refreshes hunt state without navigating away from the hidde
     assert.equal(app.posted.at(-1).ok, true);
 });
 
+test('the member gem does not prompt an already signed-in player to log in again', async () => {
+    const ready = [], posted = [];
+    let listener, prompts = 0;
+    const widget = { src: '', expand() {}, show() {}, onMessage(fn) { listener = fn; }, postMessage(message) { posted.push(message); } };
+    const $w = id => id === 'Text' || id === 'Section' ? []
+        : id === '#html2' ? widget : { collapse() {}, onMessage() {} };
+    $w.onReady = callback => ready.push(callback);
+    const context = {
+        $w, console,
+        wixLocationFrontend: { baseUrl: 'https://www.shop--dopadrop.com.au', to() {} },
+        authentication: { loggedIn: () => true, async promptLogin() { prompts++; } },
+        getMyRabbitDashboard: async () => ({ progress: { found: 44, required: 50 } })
+    };
+    vm.runInNewContext(read('src/pages/masterPage.js').replace(/^import .*;\r?\n/gm, ''), context);
+    for (const callback of ready) await callback();
+    await listener({ data: { type: 'rabbit-hole-action', action: 'sign-in' } });
+    assert.equal(prompts, 0);
+    assert.equal(posted.at(-1).payload.progress.found, 44);
+});
+
 for (const file of ['src/pages/Home.c1dmp.js', 'src/pages/Home - portal goblin.loevn.js']) {
     test(`${file}: catalogue absolute URLs navigate through the Wix page router`, async () => {
         const app = pageHarness(file, { products: [{
