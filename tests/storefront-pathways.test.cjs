@@ -58,9 +58,10 @@ test('a hunt sign-in refreshes hunt state without navigating away from the hidde
 test('the member gem does not prompt an already signed-in player to log in again', async () => {
     const ready = [], posted = [];
     let listener, prompts = 0;
+    const retired = { collapsed: false, collapse() { this.collapsed = true; } };
     const widget = { src: '', expand() {}, show() {}, onMessage(fn) { listener = fn; }, postMessage(message) { posted.push(message); } };
     const $w = id => id === 'Text' || id === 'Section' ? []
-        : id === '#html2' ? widget : { collapse() {}, onMessage() {} };
+        : id === '#html2' ? widget : id === '#rabbitDiscoveryButton' ? retired : { collapse() {}, onMessage() {} };
     $w.onReady = callback => ready.push(callback);
     const context = {
         $w, console,
@@ -73,6 +74,7 @@ test('the member gem does not prompt an already signed-in player to log in again
     await listener({ data: { type: 'rabbit-hole-action', action: 'sign-in' } });
     assert.equal(prompts, 0);
     assert.equal(posted.at(-1).payload.progress.found, 44);
+    assert.equal(retired.collapsed, true);
 });
 
 for (const file of ['src/pages/Home.c1dmp.js', 'src/pages/Home - portal goblin.loevn.js']) {

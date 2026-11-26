@@ -2,7 +2,7 @@
 
 ## Release status
 
-The fixes in this branch are tested locally and are **not yet published to Wix**.
+The pathway fixes were merged through PRs #2 and #3 and published through Wix. Production verification completed on 27 November 2026 (Australia/Sydney).
 The separate failed GitHub Pages deployment was successfully retried. Its
 recovered host is `https://theredactedsanctum.github.io/shop-dopadrop/`.
 
@@ -40,13 +40,13 @@ or enable rewards.
 | Direct legacy profile alias shows the missing-page screen | Redirect only `/profile/my/profile` to Account; preserve real public profile slugs |
 | Catalogue absolute product URLs do not match the local navigation allowlist | Normalize same-storefront URLs before dispatch; reject external origins |
 | An empty live product URL overwrites a valid featured-card link | Preserve the existing verified fallback URL |
-| Legacy portal page is blank because its embed is absent | Return to Home when that component is missing; preserve the saved portal if it exists |
+| Legacy portal page has duplicated embedded scripts and renders blank | Redirect the public `/home-1` alias to Home; retain the saved portal design in the Editor |
 | Direct review confirmation has a “See Your Review” link with `href=undefined` | Send visits without submission query context to the real reviews page; retain Wix ownership when context exists |
 
 ## Verification
 
-`npm test`: **166 passed, 0 failed**. `npm run lint` and `git diff --check`
-also pass. Eleven pathway regression tests exercise
+`npm test`: **172 passed, 0 failed**. `npm run lint` and `git diff --check`
+also pass. Thirteen pathway regression tests exercise
 account continuation, hunt sign-in staying on-page, absolute URL dispatch,
 external-origin rejection, missing-embed fallback, contextless review fallback,
 legacy-profile handling and preservation of working product links.
@@ -55,10 +55,20 @@ The pre-existing reward, challenge, daily guard, placement and renderer tests
 remain green. Wix Loyalty remains the reward provider; the live reward switch
 remains disabled.
 
-## Remaining release checks
+## Production verification and remaining access checks
 
-Merge the reviewed fixes into the Wix-tracked `main` branch and publish through
-Wix after approval. Verify the repaired homepage, Account and legacy routes in
-Preview and production. Complete the test-member signup manually, then verify
-authenticated progression and scene behaviour. A direct password gate is not
-evidence that authenticated quest progression has passed.
+The published Home embed loads from the recovered host. Actual featured-product
+and collection clicks navigate the outer Wix page correctly. `/home-1` returns
+to Home; the direct review confirmation returns to the reviews collection.
+The legacy profile alias reaches the Account entry point.
+
+The signed-in test account exposes an additional restriction: both the Home
+Account button and Wix's native Account Settings menu reach `/auth/access-restricted`.
+This is separate from the repaired public profile alias and requires a member-access
+configuration check. No permission settings have been changed.
+
+The test account is created and signed in. Its saved dashboard shows **44/50**
+discoveries. Discoveries 5–44 passed real two-touch claims across all collection,
+About, Contact and policy routes. The Forest continuation opens the existing
+Guest Area password gate; discoveries 45–50 and the final reward flow remain
+unverified. See `BUTTON_AUDIT_2026-11-27.md` for the button repair evidence.

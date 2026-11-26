@@ -3,6 +3,14 @@ import { authentication } from 'wix-members-frontend';
 import { getHuntState, getMyRabbitDashboard } from 'backend/rabbitHole.web';
 // Shared Shop-DopaDrop branding. Existing Wix store and member controls stay native.
 $w.onReady(function () {
+    // Obsolete hunt placeholders can also remain on member pages that no
+    // longer own a discovery. Preserve them in the Editor, hide them live.
+    for (const id of ['#rabbitDiscoveryButton', '#rabbitDiscoveryRetired1', '#rabbitDiscoveryRetired2']) {
+        try {
+            const retired = $w(id);
+            if (typeof retired?.collapse === 'function') retired.collapse();
+        } catch (_) { /* this page has no obsolete hunt control */ }
+    }
     $w('#vectorImage2').src = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"14\" fill=\"#09090d\" stroke=\"#ff37bb\" stroke-width=\"2\"/><path d=\"M18 4 8 18h7l-1 10 10-15h-7z\" fill=\"#f5ff37\"/></svg>";
     // The full-page Home embed owns the visible header. Remove both native
     // member bars at runtime so one cannot sit behind it on desktop while two
