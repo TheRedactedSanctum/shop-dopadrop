@@ -3,7 +3,7 @@ const PATHWAYS = Object.freeze({
     forest: '/rabbit-hole-forest',
     daily: '/rabbit-hole-daily',
     cave: '/rabbit-hole-cave',
-    account: '/profile/my/profile'
+    account: '/account-settings'
 });
 
 const SAFE_REWARD_STATUSES = new Set([

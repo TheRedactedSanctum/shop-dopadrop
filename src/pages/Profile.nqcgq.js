@@ -1,10 +1,8 @@
-// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-// “Hello, World!” Example: https://learn-code.wix.com/en/article/hello-world
+import wixLocationFrontend from 'wix-location-frontend';
 
 $w.onReady(function () {
-    // Write your JavaScript here
-
-    // To select an element by ID use: $w('#elementID')
-
-    // Click 'Preview' to run your code
+    // "my" is not a real public member slug. Preserve genuine profile routes.
+    if (wixLocationFrontend.path.join('/') === 'profile/my/profile') {
+        wixLocationFrontend.to('/account-settings');
+    }
 });
