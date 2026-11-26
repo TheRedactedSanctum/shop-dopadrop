@@ -64,8 +64,7 @@ The legacy profile alias reaches the Account entry point.
 
 The signed-in test account exposes an additional restriction: both the Home
 Account button and Wix's native Account Settings menu reach `/auth/access-restricted`.
-This is separate from the repaired public profile alias and requires a member-access
-configuration check. No permission settings have been changed.
+The active test member has no roles, while All members is unchecked for Account Settings, My Orders, My Rewards and Notifications in Wix Member Pages Access. Those four corrections are prepared but not saved; fresh confirmation is required before applying the access change. This is separate from the repaired public profile alias.
 
 The test account is created and signed in. Its saved dashboard shows **44/50**
 discoveries. Discoveries 5–44 passed real two-touch claims across all collection,

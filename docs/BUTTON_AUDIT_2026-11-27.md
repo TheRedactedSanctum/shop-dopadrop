@@ -33,7 +33,7 @@ not a claim of individual interaction tests on all 701 product pages.
 ## Remaining access-dependent checks
 
 1. Forest: Find secret 45 opens the existing Guest Area password gate. The test member remains at 44/50. Live claims 45–50, guardian dialogue, Daily and the finale cannot be verified through that gate without its password.
-2. Account Settings: Home Account, the native Wix member menu and the account tab routes shown by Wix reach Access Restricted for this test member. No access or permission settings have been changed.
+2. Member-page access: the active test member has no assigned roles, is not pending and is not blocked. Home Account, the native Wix menu and the account tab URLs all reach Access Restricted. The Wix Member Pages Access matrix confirms that All members is unchecked for Account Settings, My Orders, My Rewards and Notifications (and Events). The four basic self-service corrections are staged in Wix with Save enabled, but have NOT been saved; fresh confirmation is needed before applying them. Events and the existing Loyalty permission are unchanged.
 3. Final rewards: Wix Loyalty remains the reward provider and the existing live reward-issuance switch remains disabled. No points or checkout reward have been issued by these tests.
 4. Mobile: a full mobile Preview hit-test pass is still pending; desktop live checks and CSS touch-target constraints are verified separately.
 
@@ -42,3 +42,15 @@ not a claim of individual interaction tests on all 701 product pages.
 The Editor retains template guidance/placeholders on Refund and Accessibility,
 and Home contains an old October launch schedule. These were outside this
 button repair and require a separate content pass using the approved policies.
+
+## Approval-ready continuation
+
+The pending Save would enable All members for exactly four existing private
+member pages: Account Settings, My Orders, My Rewards and Notifications.
+This is signed-in member access, not public visitor access. Re-check the saved
+permissions and the test member's Account/Rewards/Orders/Notifications after
+approval. Then continue from the existing Forest password gate at discovery 45.
+
+The original password is unchanged. The final test cart is empty. The live
+dashboard widget was verified using revision `buttons-20261127`: 44/50 remained
+saved and Log in was hidden for the signed-in test member.
