@@ -134,3 +134,6 @@ form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"]
 .dopa-discovery.dopa-discovery-found { filter:grayscale(.8) opacity(.48); border-color:#8a873b !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
 @keyframes grimroot-yellow-glow { 0%,100% { box-shadow:0 0 4px #fff20055; } 50% { box-shadow:0 0 22px 5px #ffff00; border-color:#ffff8a; } }
 @media(prefers-reduced-motion:reduce) { .dopa-discovery.dopa-discovery-next { animation:none !important; box-shadow:0 0 10px #fff200 !important; } }
+
+/* Retired Forest prototype overlays: the hosted encounter owns its actions. */
+#comp-mvl0wln1, #comp-mvl0w91x { display:none !important; }
