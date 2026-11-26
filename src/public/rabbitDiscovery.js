@@ -4,9 +4,14 @@ import { beginButtonChallenge, findButton, getHuntState } from 'backend/rabbitHo
 import { elementIdsForRoute, placementsForRoute } from 'public/rabbitPlacementSlots';
 
 function currentRoute() {
-    const path = Array.isArray(wixLocationFrontend.path)
-        ? wixLocationFrontend.path.filter(Boolean).join('/')
-        : '';
+    const parts = Array.isArray(wixLocationFrontend.path)
+        ? wixLocationFrontend.path.filter(Boolean)
+        : [];
+    // Wix excludes a dynamic/router page's prefix from location.path.
+    // The placement registry and server challenges use the complete route.
+    const prefix = wixLocationFrontend.prefix;
+    if (prefix && parts[0] !== prefix) parts.unshift(prefix);
+    const path = parts.join('/');
     return path ? `/${path}` : '/';
 }
 

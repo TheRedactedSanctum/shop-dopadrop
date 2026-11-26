@@ -164,6 +164,22 @@ test('unassigned category routes still collapse every shared template slot', asy
     assert.equal(Object.values(elements).every(element => element.collapsed), true);
 });
 
+test('a Wix router prefix is included when binding category discoveries', async () => {
+    const route = '/category/all-products';
+    const categorySlots = [{ buttonId: 5, route, elementId: 'rabbitDiscoveryHeading' }];
+    const { elements, $w } = makeWixElements(['rabbitDiscoveryHeading']);
+    const bind = loadBinder(baseDeps({
+        wixLocationFrontend: { prefix: 'category', path: ['all-products'] },
+        placementsForRoute: value => value === route ? categorySlots : [],
+        elementIdsForRoute: value => value === route ? ['rabbitDiscoveryHeading'] : [],
+        getHuntState: async () => ({ nextButtonId: 5, nextPage: route })
+    }));
+    const result = await bind($w);
+    assert.equal(result.bound, true);
+    assert.equal(result.route, route);
+    assert.equal(elements['#rabbitDiscoveryHeading'].accessibility.ariaLabel, 'Hidden forest discovery 5');
+});
+
 test('a missing future category control does not disable the currently placed discovery', async () => {
     const categorySlots = Object.freeze([
         Object.freeze({ buttonId: 8, route: '/category/desk-workspace-fidgets', elementId: 'rabbitDiscoveryHeading' }),
