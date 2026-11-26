@@ -72,12 +72,12 @@ form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"]
 
 /* Restore the original numbered hunt artwork on native page controls. */
 .dopa-discovery { min-width:64px !important; min-height:64px !important; width:80px !important; height:80px !important; z-index:3; }
-.dopa-discovery button, .dopa-discovery a, button.dopa-discovery, a.dopa-discovery { width:100% !important; height:100% !important; background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
-.dopa-discovery .wixui-button__label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.dopa-discovery { background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
+.dopa-discovery .button__label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .dopa-discovery:focus-within { outline:3px solid #f5ff37; outline-offset:5px; }
-.dopa-discovery.dopa-discovery-touched .wixui-button__label { position:static; display:block; width:auto; height:auto; margin:0; overflow:visible; clip-path:none; white-space:normal; background:#09090de6; color:#f5ff37 !important; padding:4px; font-size:12px; }
+.dopa-discovery.dopa-discovery-touched .button__label { position:static; display:block; width:auto; height:auto; margin:0; overflow:visible; clip-path:none; white-space:normal; background:#09090de6; color:#f5ff37 !important; padding:4px; font-size:12px; }
 @keyframes dopa-discovery-drift { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-6px) rotate(3deg); } }
-@media(prefers-reduced-motion:reduce) { .dopa-discovery button, .dopa-discovery a, button.dopa-discovery, a.dopa-discovery { animation:none !important; } }
+@media(prefers-reduced-motion:reduce) { .dopa-discovery { animation:none !important; } }
 .dopa-discovery-5 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png"); }
 .dopa-discovery-6 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_4c28d07e86a74124bf1478b846140204~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_4c28d07e86a74124bf1478b846140204~mv2.png"); }
 .dopa-discovery-7 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_7fdad835729a4ef8aa85af9a8c1a0383~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_7fdad835729a4ef8aa85af9a8c1a0383~mv2.png"); }
