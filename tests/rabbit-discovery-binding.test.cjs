@@ -17,8 +17,13 @@ function loadBinder(deps) {
 }
 
 function makeButton() {
-    return {
+    const button = {
         label: '',
+        classes: new Set(),
+        customClassList: {
+            add(...names) { names.forEach(name => this.owner.classes.add(name)); },
+            remove(...names) { names.forEach(name => this.owner.classes.delete(name)); }
+        },
         accessibility: {},
         collapsed: false,
         collapseCount: 0,
@@ -28,6 +33,8 @@ function makeButton() {
         expand() { this.collapsed = false; this.expandCount += 1; },
         onClick(handler) { this.clickHandler = handler; }
     };
+    button.customClassList.owner = button;
+    return button;
 }
 
 function makeImageButton() {
@@ -71,14 +78,14 @@ function baseDeps(overrides = {}) {
     };
 }
 
-test('binder advances between distinct physical slots on the same route', async () => {
+test('all placed marks remain visible while the next mark advances and saved marks dim', async () => {
     let stateCall = 0;
     const foundCalls = [];
     const { elements, $w } = makeWixElements(['rabbitDiscovery32', 'rabbitDiscovery33', 'rabbitDiscovery34']);
     const bind = loadBinder(baseDeps({
         getHuntState: async () => (++stateCall === 1
-            ? { nextButtonId: 32, nextPage: '/about' }
-            : { nextButtonId: 33, nextPage: '/about' }),
+            ? { foundIds: [], nextButtonId: 32, nextPage: '/about' }
+            : { foundIds: [32], nextButtonId: 33, nextPage: '/about' }),
         findButton: async (buttonId, route, token) => {
             foundCalls.push([buttonId, route, token]);
             return { newFind: true, found: 32, required: 50 };
@@ -89,19 +96,22 @@ test('binder advances between distinct physical slots on the same route', async 
     assert.equal(result.bound, true);
     assert.equal(result.buttonId, 32);
     assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
-    assert.equal(elements['#rabbitDiscovery33'].collapsed, true);
-    assert.equal(elements['#rabbitDiscovery34'].collapsed, true);
+    assert.equal(elements['#rabbitDiscovery33'].collapsed, false);
+    assert.equal(elements['#rabbitDiscovery34'].collapsed, false);
 
     await elements['#rabbitDiscovery32'].clickHandler();
     assert.deepEqual(foundCalls, []);
     assert.equal(elements['#rabbitDiscovery32'].label, 'Touch the mark again');
+    assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-touched'), true);
     await elements['#rabbitDiscovery32'].clickHandler();
 
     assert.deepEqual(foundCalls, [[32, '/about', 'token-32']]);
-    assert.equal(elements['#rabbitDiscovery32'].collapsed, true);
+    assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), true);
+    assert.equal(elements['#rabbitDiscovery33'].classes.has('dopa-discovery-next'), true);
+    assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
     assert.equal(elements['#rabbitDiscovery33'].collapsed, false);
     assert.equal(elements['#rabbitDiscovery33'].label, 'A tiny forest mark');
-    assert.equal(elements['#rabbitDiscovery33'].accessibility.ariaLabel, 'Hidden forest discovery 33');
+    assert.equal(elements['#rabbitDiscovery33'].accessibility.ariaLabel, 'Hidden forest discovery 33, next in order');
 });
 
 test('binder activates clickable image elements without writing a button label', async () => {
@@ -119,7 +129,7 @@ test('binder activates clickable image elements without writing a button label',
 
     assert.equal(result.bound, true);
     assert.equal(image.collapsed, false);
-    assert.equal(image.accessibility.ariaLabel, 'Hidden forest discovery 32');
+    assert.equal(image.accessibility.ariaLabel, 'Hidden forest discovery 32, next in order');
     assert.equal(typeof image.clickHandler, 'function');
 });
 
@@ -143,7 +153,7 @@ test('shared category template collapses every physical slot before binding', as
     const result = await bind($w);
     assert.equal(result.bound, true);
     assert.equal(elements['#rabbitDiscoveryHeading'].collapsed, false);
-    assert.equal(elements['#rabbitDiscoveryGrid'].collapsed, true);
+    assert.equal(elements['#rabbitDiscoveryGrid'].collapsed, false);
     assert.equal(elements['#rabbitDiscoveryFooter'].collapsed, true);
 });
 
@@ -178,7 +188,7 @@ test('a Wix router prefix is included when binding category discoveries', async 
     const result = await bind($w);
     assert.equal(result.bound, true);
     assert.equal(result.route, route);
-    assert.equal(elements['#rabbitDiscoveryHeading'].accessibility.ariaLabel, 'Hidden forest discovery 5');
+    assert.equal(elements['#rabbitDiscoveryHeading'].accessibility.ariaLabel, 'Hidden forest discovery 5, next in order');
 });
 
 test('a missing future category control does not disable the currently placed discovery', async () => {
@@ -203,7 +213,7 @@ test('a missing future category control does not disable the currently placed di
     assert.equal(result.bound, true);
     assert.equal(result.buttonId, 8);
     assert.equal(elements['#rabbitDiscoveryHeading'].collapsed, false);
-    assert.equal(elements['#rabbitDiscoveryGrid'].collapsed, true);
+    assert.equal(elements['#rabbitDiscoveryGrid'].collapsed, false);
 });
 
 test('signed-out native routes expose one sign-in slot and activate it after login', async () => {
@@ -246,7 +256,7 @@ test('a missing future page-local control does not disable the current discovery
     assert.equal(result.bound, true);
     assert.equal(result.buttonId, 32);
     assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
-    assert.equal(elements['#rabbitDiscovery34'].collapsed, true);
+    assert.equal(elements['#rabbitDiscovery34'].collapsed, false);
 });
 
 test('obsolete and retired placeholders stay hidden without affecting the active discovery', async () => {
@@ -260,4 +270,23 @@ test('obsolete and retired placeholders stay hidden without affecting the active
     for (const id of ['rabbitDiscoveryButton', 'rabbitDiscoveryRetired1', 'rabbitDiscoveryRetired2']) {
         assert.equal(elements[`#${id}`].collapsed, true);
     }
+});
+
+
+test('future and completed marks remain visible without granting another discovery', async () => {
+    const { elements, $w } = makeWixElements(['rabbitDiscovery32', 'rabbitDiscovery33', 'rabbitDiscovery34']);
+    let challenges = 0;
+    let finds = 0;
+    const bind = loadBinder(baseDeps({
+        getHuntState: async () => ({ foundIds: [32], nextButtonId: 33, nextPage: '/about' }),
+        beginButtonChallenge: async () => { challenges += 1; },
+        findButton: async () => { finds += 1; }
+    }));
+    await bind($w);
+    await elements['#rabbitDiscovery34'].clickHandler();
+    await elements['#rabbitDiscovery32'].clickHandler();
+    assert.equal(challenges, 0);
+    assert.equal(finds, 0);
+    assert.equal(Object.values(elements).every(element => !element.collapsed), true);
+    assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), true);
 });

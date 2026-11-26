@@ -45,7 +45,9 @@ export async function bindRabbitDiscovery($w, options = {}) {
         slot.button?.customClassList?.add('dopa-discovery', `dopa-discovery-${slot.buttonId}`);
     });
     const challenges = new Map();
+    const foundIds = new Set();
     let activeButtonId = null;
+    let lastState = null;
     let inFlight = false;
     const collapseAll = () => slots.forEach(slot => slot.button?.collapse());
     const setStatus = (slot, message) => {
@@ -53,28 +55,39 @@ export async function bindRabbitDiscovery($w, options = {}) {
     };
     const setLabel = (slot, label) => {
         if (slot && typeof slot.button.label === 'string') slot.button.label = label;
-        if (label === 'A tiny forest mark') slot.button?.customClassList?.remove('dopa-discovery-touched');
-        else slot.button?.customClassList?.add('dopa-discovery-touched');
     };
     const expose = (slot, label, ariaLabel) => {
         collapseAll();
+        slots.forEach(candidate => candidate.button?.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-found', 'dopa-discovery-touched'));
+        slot?.button.customClassList?.add('dopa-discovery-touched');
         setLabel(slot, label);
         if (slot?.button.accessibility && ariaLabel) slot.button.accessibility.ariaLabel = ariaLabel;
         slot?.button.expand();
         return slot;
     };
     const activate = nextState => {
-        collapseAll();
+        lastState = nextState;
+        foundIds.clear();
+        (nextState?.foundIds || []).forEach(id => foundIds.add(Number(id)));
         activeButtonId = null;
-        if (!nextState?.nextButtonId || nextState.nextPage !== route) return null;
-        const slot = slots.find(candidate => candidate.buttonId === nextState.nextButtonId);
-        if (!slot?.button) {
-            if (slot) console.warn(`Rabbit discovery editor element is missing: #${slot.elementId}`);
-            return null;
-        }
-        activeButtonId = slot.buttonId;
         challenges.clear();
-        return expose(slot, 'A tiny forest mark', `Hidden forest discovery ${slot.buttonId}`);
+        slots.forEach(slot => {
+            if (!slot.button) return;
+            const found = foundIds.has(slot.buttonId);
+            const next = !found && slot.buttonId === nextState?.nextButtonId && nextState.nextPage === route;
+            slot.button.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-found', 'dopa-discovery-touched');
+            if (found) slot.button.customClassList?.add('dopa-discovery-found');
+            if (next) {
+                activeButtonId = slot.buttonId;
+                slot.button.customClassList?.add('dopa-discovery-next');
+            }
+            setLabel(slot, found ? 'Discovery saved' : 'A tiny forest mark');
+            if (slot.button.accessibility) slot.button.accessibility.ariaLabel = found
+                ? `Forest discovery ${slot.buttonId}, already saved`
+                : `Hidden forest discovery ${slot.buttonId}${next ? ', next in order' : ', waiting for earlier discoveries'}`;
+            slot.button.expand();
+        });
+        return slots.find(slot => slot.buttonId === activeButtonId) || null;
     };
 
     const availableSlots = slots.filter(slot => slot.button);
@@ -86,7 +99,14 @@ export async function bindRabbitDiscovery($w, options = {}) {
         activeButtonId = null;
         challenges.clear();
         const slot = preferred?.button ? preferred : availableSlots[0];
-        expose(slot, 'Retry loading the hidden hunt', 'Retry loading the hidden hunt');
+        if (lastState) {
+            availableSlots.forEach(candidate => {
+                candidate.button.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-touched');
+                candidate.button.expand();
+            });
+            slot.button.customClassList?.add('dopa-discovery-touched');
+            setLabel(slot, 'Retry loading the hidden hunt');
+        } else expose(slot, 'Retry loading the hidden hunt', 'Retry loading the hidden hunt');
         setStatus(slot, message);
         return slot;
     };
@@ -119,12 +139,16 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 }
                 if (activeButtonId !== slot.buttonId) {
                     await refresh();
+                    setStatus(slot, foundIds.has(slot.buttonId)
+                        ? 'This discovery is already saved.'
+                        : 'Follow the illuminated marks in order. Open the gem for your next step.');
                     return;
                 }
                 const challenge = challenges.get(slot.buttonId);
                 if (!challenge) {
                     challenges.set(slot.buttonId, await beginButtonChallenge(slot.buttonId, route));
                     setLabel(slot, 'Touch the mark again');
+                    slot.button.customClassList?.add('dopa-discovery-touched');
                     setStatus(slot, 'The mark stirred. Touch it once more.');
                     return;
                 }

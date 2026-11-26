@@ -272,7 +272,7 @@ export const claimReward = webMethod(Permissions.SiteMember, async () => {
     try {
         const result = await elevatedEarnPoints(accountId, {
             amount: REWARD_POINTS,
-            description: 'THE RABBIT HOLE — LOOTGREM treasure',
+            description: 'THE GRIMROOT TRIALS — LOOTGREM treasure',
             appId: MANUAL_LOYALTY_APP_ID,
             idempotencyKey
         });

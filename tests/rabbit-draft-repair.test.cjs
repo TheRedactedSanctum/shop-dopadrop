@@ -191,12 +191,12 @@ function discoveryFixture({ logged = false, cancel = false, failState = false, f
             promptLogin: async () => { if (cancel) throw Error('LOGIN_CANCELLED'); logged = true; },
             onLogin: fn => { loginCallback = fn; }
         },
-        getHuntState: async () => { reads++; if (failState) throw Error('OFFLINE'); return { nextButtonId: found + 1, nextPage: '/category/all-products' }; },
+        getHuntState: async () => { reads++; if (failState) throw Error('OFFLINE'); return { foundIds: Array.from({ length: found }, (_, i) => i + 1), nextButtonId: found + 1, nextPage: '/category/all-products' }; },
         beginButtonChallenge: async () => { challengeCalls++; return { token: 'offline-token' }; },
         findButton: async () => { finds++; found++; if (failStateAfterFind) failState = true; return { found, required: 50, caveUnlocked: false }; }
     });
     const $w = id => buttons[id.slice(1)] || status;
-    const active = () => Object.values(buttons).find(button => !button.collapsed);
+    const active = () => Object.values(buttons).find(button => !button.collapsed && button.accessibility.ariaLabel?.includes(', next in order')) || Object.values(buttons).find(button => !button.collapsed);
     return { api, $w, button: buttons.rabbitDiscoveryHeading, buttons, active, status, click: () => active().click(), login: () => { logged = true; return loginCallback(); }, counts: () => ({ reads, challengeCalls, finds }), recover: () => { failState = false; cancel = false; } };
 }
 
@@ -210,7 +210,7 @@ test('native discovery signs in before protected read and recovers cancellation 
     await Promise.all([f.click(), f.click()]);
     assert.equal(f.counts().challengeCalls, 1); assert.equal(f.counts().finds, 0);
     await f.click(); assert.equal(f.counts().finds, 1);
-    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6');
+    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6, next in order');
 });
 
 test('native discovery state failure exposes retry without silently hiding the control', async () => {
@@ -252,7 +252,7 @@ test('a saved discovery followed by failed refresh recovers from authoritative s
     await f.click(); await f.click();
     assert.equal(f.counts().finds, 1); assert.match(f.button.label, /Retry/);
     f.recover(); await f.click();
-    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6');
+    assert.equal(f.active().accessibility.ariaLabel, 'Hidden forest discovery 6, next in order');
     assert.equal(f.counts().challengeCalls, 1);
     assert.equal(f.counts().finds, 1);
 });

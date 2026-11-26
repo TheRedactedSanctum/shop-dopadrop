@@ -8,7 +8,7 @@ import {
 
 // Shop-DopaDrop: existing homepage, existing catalogue, no database writes.
 $w.onReady(function () {
-    // Rabbit Hole is hosted by the current homepage embed.
+    // Grimroot Trials is hosted by the current homepage embed.
     // Keep the receiver bound to html3; html1 is the legacy homepage embed.
     const view = $w('#html3');
     // Keep the hunt asset versioned and HTTPS-hosted. Draft-only until Wix is published.
@@ -16,7 +16,7 @@ $w.onReady(function () {
     // Force Wix's HTML component to load the current bridge-enabled build.
     // The cache key is intentionally bumped whenever the embedded navigation
     // contract changes so an older filesusr snapshot cannot mask the router.
-    view.src = 'https://theredactedsanctum.github.io/shop-dopadrop/?v=pathways-20261126';
+    view.src = 'https://theredactedsanctum.github.io/shop-dopadrop/?v=grimroot-20261127';
     // Login through the shared gem must also refresh the homepage hunt gate.
     authentication.onLogin(() => view.postMessage({ type: 'RABBIT_LOGIN_RESULT', ok: true }));
     // The hunt is page-aware: the server rejects a discovery unless the
@@ -117,7 +117,7 @@ $w.onReady(function () {
             const payload = await action();
             view.postMessage({ type: 'RABBIT_HOLE_RESULT', requestId, ok: true, payload });
         } catch (error) {
-            const message = String(error?.message || error || 'Rabbit Hole request failed');
+            const message = String(error?.message || error || 'Grimroot Trials request failed');
             view.postMessage({
                 type: 'RABBIT_HOLE_RESULT', requestId, ok: false,
                 error: message.includes('MEMBER_LOGIN_REQUIRED') ? 'MEMBER_LOGIN_REQUIRED' : message

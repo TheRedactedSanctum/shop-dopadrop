@@ -21,6 +21,7 @@ test('the gem dashboard presents member identity and progress from the safe snap
         signedIn: true,
         rank: 'DopaScout · Level 4',
         identity: 'Glow Goblin',
+        badges: '',
         xp: '120 XP',
         progress: '20 / 50',
         percent: 40,
@@ -62,4 +63,14 @@ test('the gem dashboard fails closed for absent or malformed snapshots', () => {
     assert.equal(view.reward, 'Treasure locked');
     assert.deepEqual(view.primary, { label: 'Continue the hunt', action: 'dashboard-next' });
     assert.equal(buildDashboardView(null).signedIn, false);
+});
+
+
+test('the dashboard shows the earned hunt rank and milestone badges automatically', () => {
+    const view = buildDashboardView({
+        identity: { quest: { title: 'DopaDetective' }, unlockedTitles: ['Portal Peeper', 'Chaos Cartographer', 'DopaDetective'] },
+        progress: { found: 44, required: 50, percent: 88 }
+    });
+    assert.equal(view.identity, 'DopaDetective');
+    assert.equal(view.badges, 'Portal Peeper · Chaos Cartographer · DopaDetective');
 });

@@ -24,7 +24,7 @@ $w.onReady(function () {
         if (!entry) {
             return {
                 mode: 'daily',
-                eyebrow: 'Rabbit Hole Daily',
+                eyebrow: 'Grimroot Trials Daily',
                 progress: { current: 0, total: 30 },
                 question: 'The next forest chronicle has not been released yet.',
                 hint: 'Return when the forest opens its next clue.',

@@ -30,8 +30,8 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const masterSource = read('src/pages/masterPage.js');
     const homeSource = read('src/pages/Home.c1dmp.js');
 
-    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=buttons-20261127/);
-    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=pathways-20261126/);
+    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-20261127/);
+    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=grimroot-20261127/);
 });
 
 test('the embedded Home header owns one account link and native member bars are removed', () => {
@@ -181,7 +181,7 @@ test('the member dashboard renders when window.status is the browser status stri
         title: ''
     });
     const elements = Object.fromEntries(
-        ['g', 'p', 'x', 'login', 'xp', 'count', 'forest', 'daily', 'reward', 'n', 'bar', 'c', 'f', 'd', 'dashboard', 'rank', 'identity', 'status']
+        ['g', 'p', 'x', 'login', 'xp', 'count', 'forest', 'daily', 'reward', 'n', 'bar', 'c', 'f', 'd', 'dashboard', 'rank', 'identity', 'badges', 'status']
             .map(id => [id, makeElement(...(id === 'dashboard' ? ['dashboard', 'loading'] : []))])
     );
     const parent = { postMessage() {} };
@@ -310,7 +310,7 @@ test('the standalone homepage mounts the gem while the Wix hunt iframe leaves it
     for (const html of [source, servedSource]) {
         assert.match(html, /if\(window\.parent!==window\)return/);
         assert.match(html, /iframe\.src='rabbit-widget\.html'/);
-        assert.match(html, /iframe\.title='Rabbit Hole member dashboard'/);
+        assert.match(html, /iframe\.title='Grimroot Trials member dashboard'/);
         assert.match(html, /iframe\.className='standalone-gem'/);
     }
 });

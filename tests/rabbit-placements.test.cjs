@@ -107,7 +107,7 @@ test('native route templates bind placement-aware authenticated discovery contro
     assert.match(helper, /beginButtonChallenge/);
     assert.match(helper, /findButton/);
     assert.match(helper, /await getHuntState\(\)/);
-    assert.match(helper, /nextPage !== route/);
+    assert.match(helper, /nextState.nextPage === route/);
     assert.match(helper, /activate\(nextState\)/);
     assert.match(helper, /options\.onFound\(result, nextState\)/);
     assert.doesNotMatch(helper, /resetHuntState|claimReward/);

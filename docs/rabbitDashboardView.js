@@ -59,7 +59,8 @@
         return {
             signedIn: true,
             rank: `${String(rank.title || 'DopaSprout')} · Level ${count(rank.level)}`,
-            identity: identity.sensoryIdentity ? String(identity.sensoryIdentity) : 'Identity not selected',
+            identity: [identity.quest?.title, identity.sensoryIdentity].filter(Boolean).map(String).join(' · ') || 'Identity not selected',
+            badges: (Array.isArray(identity.unlockedTitles) ? identity.unlockedTitles : []).filter(title => typeof title === 'string').join(' · '),
             xp: `${count(identity.progressionXp)} XP`,
             progress: `${found} / ${required}`,
             percent: count(progress.percent, 100),

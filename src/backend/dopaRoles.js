@@ -126,11 +126,11 @@ export function deriveAchievementTitles(activity = {}) {
     add(count(activity.hiddenButtonsFound) >= 1, quest.firstButton);
     add(count(activity.riddlesSolved) >= 1, quest.firstRiddle);
     add(count(activity.hiddenButtonsFound) >= 5, quest.multipleElements);
-    add(count(activity.secretPagesFound) >= 1, quest.secretPage);
-    add(count(activity.questChainsCompleted) >= 1, quest.questChain);
-    add(count(activity.portalsFound) >= 1, quest.portal);
-    add(count(activity.hiddenAreasExplored) >= 1, quest.hiddenAreas);
-    add(count(activity.advancedPuzzlesSolved) >= 1, quest.advancedPuzzle);
+    add(count(activity.secretPagesFound) >= 1 || count(activity.hiddenButtonsFound) >= 10, quest.secretPage);
+    add(count(activity.questChainsCompleted) >= 1 || count(activity.hiddenButtonsFound) >= 15, quest.questChain);
+    add(count(activity.portalsFound) >= 1 || count(activity.hiddenButtonsFound) >= 20, quest.portal);
+    add(count(activity.hiddenAreasExplored) >= 1 || count(activity.hiddenButtonsFound) >= 30, quest.hiddenAreas);
+    add(count(activity.advancedPuzzlesSolved) >= 1 || count(activity.hiddenButtonsFound) >= 40, quest.advancedPuzzle);
     add(bool(activity.questCompleted) || count(activity.hiddenButtonsFound) >= 50, quest.completed);
     add(bool(activity.appleFound), quest.apple);
     add(bool(activity.midnightClueFound), quest.midnight);

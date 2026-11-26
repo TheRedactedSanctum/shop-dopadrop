@@ -23,6 +23,10 @@ $w.onReady(function () {
         } catch (_) { /* the native member bar is not present on this breakpoint */ }
     }
     $w('Text').forEach(element => {
+        const originalText = element.text || '';
+        if (/(?:rabbit hole|rabbit warren)/i.test(originalText)) {
+            element.text = originalText.replace(/(?:the\s+)?rabbit (?:hole|warren)/gi, 'The Grimroot Trials');
+        }
         const text = (element.text || '').trim();
         if (text === 'About' || text === 'Contact') {
             const path = text === 'About' ? '/about' : '/contact';
@@ -49,13 +53,13 @@ $w.onReady(function () {
     });
 });
 
-// The shared header is the one owner of the Rabbit Hole launcher. The Home
+// The shared header is the one owner of the Grimroot Trials launcher. The Home
 // embed still contains the hunt, but its internal HUD is hidden so there is
 // exactly one visible control.
 $w.onReady(function () {
     const rabbitWidget = $w('#html2');
     if (!rabbitWidget) return;
-    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=buttons-20261127';
+    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-20261127';
     try {
         if (typeof rabbitWidget.expand === 'function') rabbitWidget.expand();
         if (typeof rabbitWidget.show === 'function') rabbitWidget.show();

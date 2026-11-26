@@ -58,7 +58,10 @@ export async function markDopaProfileComplete(memberId) {
 
 export function memberProfileView(profile, questState = {}) {
     const identity = normaliseIdentity(profile);
-    const unlockedTitles = deriveAchievementTitles(profile.activity || {});
+    const unlockedTitles = deriveAchievementTitles({
+        ...profile.activity,
+        hiddenButtonsFound: Math.max(Number(profile.activity?.hiddenButtonsFound || 0), Number(questState.foundCount ?? questState.found) || 0)
+    });
     const effectiveQuestState = Object.keys(questState).length
         ? questState
         : { foundCount: Number(profile.activity?.hiddenButtonsFound || 0) };

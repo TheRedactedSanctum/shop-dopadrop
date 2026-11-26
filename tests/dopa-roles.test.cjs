@@ -146,3 +146,13 @@ test('Dopa member profiles stay private and are written only through trusted bac
     assert.match(backend, /wixData\.get\(COLLECTION, memberId, \{ suppressAuth: true \}\)/);
     assert.match(backend, /wixData\.save\(COLLECTION, next, \{ suppressAuth: true \}\)/);
 });
+
+
+test('hunt milestones automatically unlock their earned titles without unrelated activity', () => {
+    const { deriveAchievementTitles } = require('../src/backend/dopaRoles.js');
+    const stages = [[20, 'Portal Peeper'], [30, 'Chaos Cartographer'], [40, 'DopaDetective'], [50, 'The Grand Gremlin']];
+    for (const [threshold, title] of stages) {
+        assert.equal(deriveAchievementTitles({ hiddenButtonsFound: threshold - 1 }).includes(title), false);
+        assert.equal(deriveAchievementTitles({ hiddenButtonsFound: threshold }).includes(title), true);
+    }
+});

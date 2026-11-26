@@ -72,7 +72,7 @@ form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"]
 
 /* Restore the original numbered hunt artwork on native page controls. */
 .dopa-discovery { min-width:64px !important; min-height:64px !important; width:80px !important; height:80px !important; z-index:3; }
-.dopa-discovery { background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
+.dopa-discovery { background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none; animation:dopa-discovery-drift 7s ease-in-out infinite; }
 .dopa-discovery .button__label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .dopa-discovery:focus-within { outline:3px solid #f5ff37; outline-offset:5px; }
 .dopa-discovery.dopa-discovery-touched .button__label { position:static; display:block; width:auto; height:auto; margin:0; overflow:visible; clip-path:none; white-space:normal; background:#09090de6; color:#f5ff37 !important; padding:4px; font-size:12px; }
@@ -124,3 +124,11 @@ form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"]
 .dopa-discovery-48 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_a83e96ead5f448a6b82e8347776ce8d3~mv2.png"); }
 .dopa-discovery-49 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_b1bb2776bae4440bb395ac7a4cf1d32b~mv2.png"); }
 .dopa-discovery-50 { --rabbit-art:url("https://static.wixstatic.com/media/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png/v1/fill/w_400,h_400,q_85,enc_auto/60e4fe_55e86a8607d9437486e6804abbf232e2~mv2.png"); }
+
+/* Grimroot marks stay present after sign-in and after their second touch. */
+.dopa-discovery { border:2px solid #c8c52e !important; box-sizing:border-box; }
+.dopa-discovery.dopa-discovery-next { border-color:#fff200 !important; animation:dopa-discovery-drift 7s ease-in-out infinite, grimroot-yellow-glow 1.8s ease-in-out infinite; }
+.dopa-discovery.dopa-discovery-touched { border-width:4px !important; }
+.dopa-discovery.dopa-discovery-found { filter:grayscale(.8) opacity(.48); border-color:#8a873b !important; animation:dopa-discovery-drift 7s ease-in-out infinite; }
+@keyframes grimroot-yellow-glow { 0%,100% { box-shadow:0 0 4px #fff20055; } 50% { box-shadow:0 0 22px 5px #ffff00; border-color:#ffff8a; } }
+@media(prefers-reduced-motion:reduce) { .dopa-discovery.dopa-discovery-next { animation:none !important; box-shadow:0 0 10px #fff200 !important; } }

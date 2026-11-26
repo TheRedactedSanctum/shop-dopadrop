@@ -2,7 +2,7 @@ export const TOTAL_BUTTONS = 50;
 export const REWARD_POINTS = 500;
 export const LOOTGREM_CHECKOUT_CODE = 'LOOTGREM';
 export const GUARDIAN_MILESTONES = [
-    { threshold: 20, label: 'MOTHKEEPER', characterId: 'mothkeeper', actionId: 'wait', difficulty: 'NORMAL' },
+    { threshold: 20, label: 'KAYLIX — MOTH KEEPER', characterId: 'mothkeeper', actionId: 'wait', difficulty: 'NORMAL' },
     { threshold: 30, label: 'ROOTWHISPER', characterId: 'rootwhisper', actionId: 'protect', difficulty: 'HARDER' },
     { threshold: 40, label: 'GRUMBLEBARK', characterId: 'grumblebark', actionId: 'listen', difficulty: 'EXTREME' },
     { threshold: 50, label: 'TANGLEBRIGHT', characterId: 'tanglebright', actionId: 'approach', difficulty: 'IMPOSSIBLE' }
@@ -117,9 +117,9 @@ export function transitionLootgrem(currentState = {}, node, option, reward = {})
 
 export const FOREST_ENCOUNTERS = {
     mothkeeper: {
-        name: 'The first forest encounter',
+        name: 'Kaylix, the Moth Keeper',
         actions: {
-            wait: { line: 'You let the Mothkeeper\'s lantern settle before asking.', affinity: 2, fragment: 'Lantern Oath' },
+            wait: { line: 'You let Kaylix\'s lantern settle before asking.', affinity: 2, fragment: 'Lantern Oath' },
             ask: { line: 'You ask who lit the lantern.', affinity: 1, fragment: 'First Flame' }
         }
     },

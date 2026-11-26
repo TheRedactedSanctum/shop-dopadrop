@@ -18,10 +18,10 @@
         forest: 'assets/rabbit-hole/forest-day-v3.webp'
     });
     const GUARDIANS = Object.freeze({
-        mothkeeper: ['assets/rabbit-hole/mothkeeper.webp', 'Mothkeeper, guardian of the Rabbit Hole'],
-        rootwhisper: ['assets/rabbit-hole/rootwhisper-v7.webp', 'Rootwhisper, guardian of the Rabbit Hole'],
-        grumblebark: ['assets/rabbit-hole/grumblebark-v2.webp', 'Grumblebark, guardian of the Rabbit Hole'],
-        tanglebright: ['assets/rabbit-hole/tanglebright-v4.webp', 'Tanglebright, guardian of the Rabbit Hole']
+        mothkeeper: ['assets/rabbit-hole/mothkeeper.webp', 'Mothkeeper, guardian of the Grimroot Trials'],
+        rootwhisper: ['assets/rabbit-hole/rootwhisper-v7.webp', 'Rootwhisper, guardian of the Grimroot Trials'],
+        grumblebark: ['assets/rabbit-hole/grumblebark-v2.webp', 'Grumblebark, guardian of the Grimroot Trials'],
+        tanglebright: ['assets/rabbit-hole/tanglebright-v4.webp', 'Tanglebright, guardian of the Grimroot Trials']
     });
 
     function cleanText(value, maximum = 500) {

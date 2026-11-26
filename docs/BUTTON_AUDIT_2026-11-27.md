@@ -54,3 +54,12 @@ approval. Then continue from the existing Forest password gate at discovery 45.
 The original password is unchanged. The final test cart is empty. The live
 dashboard widget was verified using revision `buttons-20261127`: 44/50 remained
 saved and Log in was hidden for the signed-in test member.
+
+
+## Grimroot Trials release — 27 November 2026
+
+The current release renames player-facing hunt text to The Grimroot Trials while preserving technical routes, stable discovery IDs and member progress. Signed-in players see every assigned mark on each page. The server still enforces discovery order. The next mark pulses brighter yellow; the first touch primes its challenge and the second saves it. Saved marks remain visible and dimmed. Existing wobble and reduced-motion behaviour are retained.
+
+Milestone titles unlock automatically from verified hunt progress, including Portal Peeper at 20, Chaos Cartographer at 30, DopaDetective at 40 and The Grand Gremlin at 50, and are shown in the private dashboard. These are display achievements; this change does not assign Wix security roles or change private member-page permissions.
+
+Validation before deployment: 175 automated tests passed; ESLint and git diff checks passed. Live publication and browser evidence are recorded separately after deployment. The Forest password gate, final reward configuration and full prestige/Chronicle implementation remain separate outstanding work.

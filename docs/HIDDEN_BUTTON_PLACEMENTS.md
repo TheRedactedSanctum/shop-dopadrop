@@ -6,7 +6,7 @@ Updated: 2026-11-27 (Australia/Sydney)
 
 The canonical 50-entry sequence uses authenticated per-member challenges. Discovery 1 remains the only signup gate. Guardian thresholds remain Mothkeeper 20, Rootwhisper 30, Grumblebark 40, and Tanglebright 50. Reward issuance is disabled and no public reset exists.
 
-Buttons 1-4 are explicit page-local targets inside bounded homepage artwork bands. Buttons 5-50 use distinct native Wix controls at page-local anchors. Only the authoritative next discovery is exposed. Static pages use numbered IDs such as `#rabbitDiscovery32`; the Category template uses `#rabbitDiscoveryHeading`, `#rabbitDiscoveryGrid`, and `#rabbitDiscoveryFooter`.
+Buttons 1-4 are explicit page-local targets inside bounded homepage artwork bands. Buttons 5-50 use distinct native Wix controls at page-local anchors. After member sign-in, all assigned discoveries on each page remain visible. Only the authoritative next discovery accepts its two-touch claim; saved discoveries stay visible and dimmed. The next mark has a brighter yellow pulse. Static pages use numbered IDs such as `#rabbitDiscovery32`; the Category template uses `#rabbitDiscoveryHeading`, `#rabbitDiscoveryGrid`, and `#rabbitDiscoveryFooter`.
 
 Every native control must have a minimum 44 by 44 CSS-pixel mobile hit area and sit above every normal page-canvas text, image, repeater, decoration, section, and container layer. Legitimate Wix system overlays—login, cookies, navigation, cart, lightboxes, and accessibility dialogs—remain above the hunt.
 
