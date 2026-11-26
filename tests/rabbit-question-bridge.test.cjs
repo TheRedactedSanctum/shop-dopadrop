@@ -165,3 +165,27 @@ test('the required editor contract fails with the exact missing element ID', () 
         /#rabbitQuestionView/
     );
 });
+
+test('the scene renderer clears its obsolete native heading without hiding navigation text', () => {
+    const oldHeading = { text: 'THE RABBIT HOLE — FOREST', collapsed: false, collapse() { this.collapsed = true; } };
+    const navigation = { text: 'Shop All', collapsed: false, collapse() { this.collapsed = true; } };
+    const view = { onMessage() {}, postMessage() {} };
+    bindRabbitQuestionView(id => id === 'Text' ? [oldHeading, navigation] : view, {
+        load() {}, submit() {}, mapResult() {}, mapError() {}
+    });
+    assert.equal(oldHeading.collapsed, true);
+    assert.equal(navigation.collapsed, false);
+});
+
+test('the hosted cave has one dialogue owner and clears the obsolete claim controls', () => {
+    const controls = Object.fromEntries(['lootgremWho', 'lootgremReward', 'lootgremClaim'].map(id => [
+        `#${id}`, { collapsed: false, collapse() { this.collapsed = true; } }
+    ]));
+    const legacyNotice = { text: 'The cave is sealed until all 50 hidden forest buttons are found.', collapsed: false, collapse() { this.collapsed = true; } };
+    const view = { onMessage() {}, postMessage() {} };
+    bindRabbitQuestionView(id => id === 'Text' ? [legacyNotice] : controls[id] || view, {
+        load() {}, submit() {}, mapResult() {}, mapError() {}
+    });
+    assert.equal(Object.values(controls).every(control => control.collapsed), true);
+    assert.equal(legacyNotice.collapsed, true);
+});

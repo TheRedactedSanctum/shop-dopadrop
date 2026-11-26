@@ -25,6 +25,21 @@ export function bindRabbitQuestionView($w, options = {}) {
     if (![options.load, options.submit, options.mapResult, options.mapError].every(value => typeof value === 'function')) {
         throw new Error('Rabbit question bridge callbacks are required');
     }
+    // The hosted scene owns its heading. Old narrow native text otherwise
+    // sits on top of the question and choices after the renderer loads.
+    let nativeText = [];
+    try { nativeText = $w('Text'); } catch (_) { /* no native text on this page */ }
+    if (Array.isArray(nativeText)) nativeText.forEach(element => {
+        const text = (element.text || '').trim();
+        if (/^THE RABBIT HOLE\s*[—-]/i.test(text)
+            || text === 'The cave is sealed until all 50 hidden forest buttons are found.') element.collapse();
+    });
+    for (const id of ['#lootgremWho', '#lootgremReward', '#lootgremClaim', '#dailyAnswer', '#mothkeeperWait', '#rootwhisperProtect']) {
+        try {
+            const legacy = $w(id);
+            if (typeof legacy?.collapse === 'function') legacy.collapse();
+        } catch (_) { /* obsolete control is absent */ }
+    }
 
     const seenRequests = new Set();
     let ready = false;
