@@ -47,3 +47,12 @@ Local Opera extension connected through Browser js, browser id0. Variables agent
 - Live Daily verification redirected to /auth/access-restricted for this signed-in member. Existing access rule is not changed. Cave lore remains covered by tests and its50-mark access guard; no reward request made.
 - Two legacy Forest overlays survived DOM-ID CSS despite matching the expected generated IDs; the exact style-precedence cause was not established. Replaced that approach with semantic label-based collapse in rabbitQuestionBridge. Final patch tests, commit, publish and live overlay verification pending.
 - Connected Browser aliases: cleanupEditor is tab222244809; verificationTab tab222244812, currently Forest crew branch (marked deliverable); prior auditAbout tab222244801 is being used to browse the shop, avoid redirecting it. New failed Daily tab222244815 is Access Restricted. Browser activity is closed.
+
+## Final verified outcome
+- Dialogue/source release 80af67c and final native-overlay cleanup 2965a93 published through Wix. Editor reload was required for the final public-module cleanup to become live.
+- Final validation: 183 tests passed; ESLint and git diff checks passed.
+- Live Forest readback: old intro and Listen out for Tanglebright prototype are absent from rendered page text. New guardian hub, Grumblebark revisit, sourced oddity and crew branch verified. Native marks 45/50 remain 44px with saved/waiting labels; no mark, daily answer or reward was claimed during the read-only dialogue checks.
+- /home-1 was opened in Browser and resolved to https://www.shop--dopadrop.com.au/ with the canonical storefront title. Portal goblin page removal is saved and published.
+- Daily live testing remains blocked by the current signed-in member’s Access Restricted redirect. Its code, eligibility/catch-up rules and renderer are tested and published. No access setting was changed.
+- Cave lore is implemented and tested behind its existing 50-mark guard. The current member has 45 marks, so its eligible live branch was not exercised. No reward issuance or prestige feature was enabled.
+- Most useful review page: https://www.shop--dopadrop.com.au/rabbit-hole-forest, left on a sourced Grumblebark oddity.

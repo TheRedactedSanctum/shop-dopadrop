@@ -72,3 +72,7 @@ The intended continuation is prestige, The Forgotten Chronicle after the first p
 Guardian thresholds currently unlock encounters; the mark sequence itself is not stopped at 20/30/40 until a guardian is completed. Cave entry currently checks fifty marks, rather than requiring all four encounters too. Milestone titles are automatic display achievements, not assigned Wix security roles/badges. Forced softgates, actual role/badge assignment, live reward issuance and the prestige/Chronicle finale remain to be implemented and tested separately.
 
 The obsolete Home - portal goblin page is retired. The public /home-1 address has a server-side redirect to the canonical homepage.
+
+## Publication checks
+
+The dialogue release and final overlay cleanup were published on 27 November 2026. The Forest guardian hub, a completed Grumblebark revisit, a sourced oddity and crew dialogue were verified live without changing progress. Old Forest prototype overlays were removed. Final automated checks: 183 passing tests and ESLint. The current member’s Daily visit redirects to Access Restricted; its live interaction test remains blocked by that existing rule. The eligible Cave branch was not exercised because the member has 45 of 50 marks. The old /home-1 address was verified to resolve to the canonical homepage.
