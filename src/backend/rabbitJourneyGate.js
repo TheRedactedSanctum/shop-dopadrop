@@ -16,7 +16,7 @@ export function localPeriod(timeZone, now = new Date()) {
     if (typeof timeZone !== 'string' || timeZone.length > 100) return null;
     try {
         const hour = Number(new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', hourCycle: 'h23' }).format(now));
-        return hour >= 6 && hour < 18 ? 'day' : 'night';
+        return hour >= 4 && hour < 16 ? 'day' : 'night';
     } catch (_) { return null; }
 }
 export function guardianAvailability(characterId, timeZone, now = new Date()) {
@@ -25,8 +25,8 @@ export function guardianAvailability(characterId, timeZone, now = new Date()) {
     const required = characterId === 'mothkeeper' ? 'day' : 'night';
     return { available: period === required, period, required,
         message: characterId === 'mothkeeper'
-            ? 'Kaylix appears only in the daytime forest, from 6:00 am to 6:00 pm in your local time. Come back in the light.'
-            : 'Rootwhisper appears only in the dark forest, from 6:00 pm to 6:00 am in your local time. Come back after dusk.' };
+            ? 'Kaylix appears only in the daytime forest, from 4:00 am to 4:00 pm in your local time. Come back in the light.'
+            : 'Rootwhisper appears only in the dark forest, from 4:00 pm to 4:00 am in your local time. Come back after dusk.' };
 }
 export function journeyPhase(state, location) {
     if (!hasForestPrelude(state)) return location === 'tavern' ? 'tavern-welcome' : 'forest';
