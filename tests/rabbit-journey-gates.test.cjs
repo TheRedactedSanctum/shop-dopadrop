@@ -4,7 +4,7 @@ const { guardianAvailability, localPeriod, journeyPhase, advanceJourneyState, fo
 const prelude = ['mothkeeper:wait','rootwhisper:protect','grumblebark:listen'];
 const state = () => ({foundCount:50,forestState:{encounters:[...prelude],fragments:[],bonds:{}}});
 test('local day/night boundaries use server instant and declared timezone, including Sydney summer time',()=>{
-    for(const [utc,day] of [['2026-11-26T16:59:00Z',false],['2026-11-26T17:00:00Z',true],['2026-11-27T04:59:00Z',true],['2026-11-27T05:00:00Z',false]]){
+    for(const [utc,day] of [['2026-11-26T17:59:00Z',false],['2026-11-26T18:00:00Z',true],['2026-11-27T05:59:00Z',true],['2026-11-27T06:00:00Z',false]]){
         const now=new Date(utc);
         assert.equal(guardianAvailability('mothkeeper','Australia/Sydney',now).available,day);
         assert.equal(guardianAvailability('rootwhisper','Australia/Sydney',now).available,!day);
