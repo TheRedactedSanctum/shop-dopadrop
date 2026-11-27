@@ -1,17 +1,19 @@
 import { authentication } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
-import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode, getCaveLore } from 'backend/rabbitHole.web';
+import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode, getCaveLore, getJourneyStage, advanceJourney, forestEncounter } from 'backend/rabbitHole.web';
 import { bindRabbitQuestionView } from 'public/rabbitQuestionBridge';
 import { caveSnapshot } from 'public/rabbitCaveView';
 
 $w.onReady(function () {
     let state = {};
+    let journeyView = null;
     let dialogue;
     let currentNode = 'welcome';
     let shownChoices = new Set();
     let loreView = null;
     let loreCursor = 0;
     const render = status => {
+        if (journeyView) { shownChoices = new Set(journeyView.choices.map(choice => choice.id)); return journeyView; }
         const snapshot = loreView ? {
             mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Ember',
             progress: { current: 0, total: 3 }, question: loreView.prompt,
@@ -49,12 +51,26 @@ $w.onReady(function () {
                     status: { kind: 'ready', message: 'Your progress stays with your account.' }
                 };
             }
+            journeyView = await getJourneyStage('cave');
+            if (journeyView.phase !== 'reward') return render();
+            journeyView = null;
             const result = await enterCave();
             accept(result);
             return render();
         },
         submit: async action => {
             if (action.action !== 'dialogue' || !shownChoices.has(action.choiceId)) throw new Error('INVALID_DIALOGUE_CHOICE');
+            if (journeyView) {
+                if (['forest', 'tavern'].includes(action.choiceId)) {
+                    wixLocationFrontend.to(action.choiceId === 'forest' ? '/rabbit-hole-forest' : '/grimroot-tavern');
+                    return { journey: journeyView };
+                }
+                if (action.choiceId === 'approach') await forestEncounter('tanglebright', 'approach');
+                else await advanceJourney('cave', action.choiceId);
+                const journey = await getJourneyStage('cave');
+                if (journey.phase === 'reward') return { journey: null, state: await enterCave() };
+                return { journey };
+            }
             if (action.choiceId === 'sign_in') {
                 await authentication.promptLogin();
                 return { state: await enterCave() };
@@ -80,6 +96,7 @@ $w.onReady(function () {
             return { state: await chooseLootgrem(currentNode, action.choiceId) };
         },
         mapResult: result => {
+            if (Object.prototype.hasOwnProperty.call(result, 'journey')) journeyView = result.journey;
             if (result.clearLore) loreView = null;
             if (result.lore) loreView = result.lore;
             if (result.state) accept(result.state);

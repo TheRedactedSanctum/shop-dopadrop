@@ -1,3 +1,4 @@
+import wixLocationFrontend from 'wix-location-frontend';
 import { authentication } from 'wix-members-frontend';
 import { forestEncounter, getForestContent } from 'backend/rabbitHole.web';
 import { bindRabbitDiscovery } from 'public/rabbitDiscovery';
@@ -18,6 +19,7 @@ $w.onReady(function () {
         }
         initialized = true;
 
+    const context = extra => ({ ...extra, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     let stage;
     let choiceMap = new Map();
 
@@ -62,24 +64,25 @@ $w.onReady(function () {
         };
     };
 
-    const load = async () => snapshot(await getForestContent());
+    const load = async () => snapshot(await getForestContent(context()));
 
     const questionView = bindRabbitQuestionView($w, {
         load,
         submit: async action => {
             const choice = choiceMap.get(action.choiceId);
             if (action.action !== 'encounter' || !choice) throw new Error('INVALID_FOREST_CHOICE');
+            if (choice.kind === 'travel') { wixLocationFrontend.to(choice.route); return { browsing: true, next: stage }; }
             if (choice.kind === 'story') return {
                 browsing: true,
-                next: await getForestContent({ guardianKey: choice.guardianKey, branch: choice.branch, cursor: choice.cursor })
+                next: await getForestContent(context({ guardianKey: choice.guardianKey, branch: choice.branch, cursor: choice.cursor }))
             };
             try {
-                const outcome = await forestEncounter(choice.characterId, choice.actionId);
-                return { outcome, next: await getForestContent() };
+                const outcome = await forestEncounter(choice.characterId, choice.actionId, context());
+                return { outcome, next: await getForestContent(context()) };
             } catch (error) {
                 const message = String(error?.message || error || '');
-                if (message.includes('FOREST_PREDECESSOR_REQUIRED') || message.includes('FOREST_STAGE_LOCKED')) {
-                    return { stale: true, next: await getForestContent() };
+                if (message.includes('FOREST_PREDECESSOR_REQUIRED') || message.includes('FOREST_STAGE_LOCKED') || message.includes('FOREST_TIME_LOCKED')) {
+                    return { stale: true, next: await getForestContent(context()) };
                 }
                 throw error;
             }
@@ -103,6 +106,8 @@ $w.onReady(function () {
         })
     });
     reloadForestQuestion = questionView.reload;
+    // Re-check local day/night while the forest stays open.
+    setInterval(() => questionView.reload(), 60000);
     };
     // Do not await the login modal from onReady, and continue after login.
     authentication.onLogin(initialize);

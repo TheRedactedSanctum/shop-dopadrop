@@ -1,3 +1,4 @@
+import { forestJourneyView, guardianAvailability, journeySnapshot, journeyPhase, advanceJourneyState } from './rabbitJourneyGate';
 import { webMethod, Permissions } from 'wix-web-module';
 import wixData from 'wix-data';
 import { currentMember } from 'wix-members-backend';
@@ -142,6 +143,7 @@ export const enterCave = webMethod(Permissions.SiteMember, async () => {
     const id = await memberId();
     const state = await load(id);
     if (state.foundCount !== TOTAL_BUTTONS) throw new Error('CAVE_LOCKED');
+    if (journeyPhase(state, 'cave') !== 'reward') throw new Error('CAVE_JOURNEY_REQUIRED');
     // Reloading the cave must not reset a saved dialogue or reward choice.
     if (!state.caveEntered) {
         state.caveEntered = true;
@@ -167,7 +169,8 @@ export const chooseLootgrem = webMethod(Permissions.SiteMember, async (node, opt
 
 export const getForestContent = webMethod(Permissions.SiteMember, async (request = {}) => {
     const id = await memberId();
-    return buildForestDialogue(await load(id), request);
+    const state = await load(id);
+    return forestJourneyView(buildForestDialogue(state, request), state, request);
 });
 
 export const getCaveLore = webMethod(Permissions.SiteMember, async (request = {}) => {
@@ -175,9 +178,11 @@ export const getCaveLore = webMethod(Permissions.SiteMember, async (request = {}
     return buildCaveLore(await load(id), request);
 });
 
-export const forestEncounter = webMethod(Permissions.SiteMember, async (characterId, actionId) => {
+export const forestEncounter = webMethod(Permissions.SiteMember, async (characterId, actionId, request = {}) => {
     const id = await memberId();
     const state = await load(id);
+    if (!guardianAvailability(characterId, request.timeZone).available) throw new Error('FOREST_TIME_LOCKED');
+    if (characterId === 'tanglebright' && journeyPhase(state, 'cave') !== 'lair') throw new Error('TAVERN_OR_CATACOMBS_REQUIRED');
     const encounterNumber = state.forestState?.encounters?.length || 0;
     const requiredThreshold = HUNT_STAGES[encounterNumber]?.threshold;
     if (!requiredThreshold || state.foundCount < requiredThreshold) throw new Error('FOREST_STAGE_LOCKED');
@@ -324,4 +329,15 @@ export const claimCheckoutCode = webMethod(Permissions.SiteMember, async () => {
         code: TANGLEBRIGHT_REWARD.code,
         alreadyIssued: prepared.action === 'already_issued'
     };
+});
+
+export const getJourneyStage = webMethod(Permissions.SiteMember, async (location) => {
+    if (!['tavern', 'cave'].includes(location)) throw new Error('INVALID_JOURNEY_LOCATION');
+    return journeySnapshot(await load(await memberId()), location);
+});
+export const advanceJourney = webMethod(Permissions.SiteMember, async (location, action) => {
+    if (!['tavern', 'cave'].includes(location)) throw new Error('INVALID_JOURNEY_LOCATION');
+    const state = advanceJourneyState(await load(await memberId()), location, action);
+    await save(state);
+    return journeySnapshot(state, location);
 });

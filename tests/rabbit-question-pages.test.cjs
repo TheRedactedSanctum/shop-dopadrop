@@ -42,14 +42,14 @@ test('Forest exposes one authenticated safe stage and no generated button IDs', 
     assert.match(source, /bindRabbitQuestionView/);
     assert.doesNotMatch(source, /comp-mvl0wln1|comp-mvl101pj|comp-mvl11a5p/);
     assert.match(source, /choiceMap\.get\(action\.choiceId\)/);
-    assert.match(source, /forestEncounter\(choice\.characterId,\s*choice\.actionId\)/);
+    assert.match(source, /forestEncounter\(choice\.characterId,\s*choice\.actionId,\s*context\(\)\)/);
     assert.match(source, /guardianKey:\s*view\.guardian\?\.id/);
 });
 
 test('Forest refreshes the authoritative stage after success or stale action', () => {
     const source = read('src/pages/Rabbit Hole Forest.l4tqi.js');
 
-    assert.match(source, /next:\s*await getForestContent\(\)/);
+    assert.match(source, /next:\s*await getForestContent\(context\(\)\)/);
     assert.match(source, /FOREST_PREDECESSOR_REQUIRED/);
     assert.match(source, /FOREST_STAGE_LOCKED/);
     assert.match(source, /result\.next/);

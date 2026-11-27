@@ -1,3 +1,4 @@
+const journey = require('../src/backend/rabbitJourneyGate.js');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -23,7 +24,7 @@ function backend(initial = {}) {
     let writes = 0, providerCalls = 0, now = Date.parse('2026-10-30T00:00:00Z');
     const clone = x => JSON.parse(JSON.stringify(x));
     const api = moduleInVm('src/backend/rabbitHole.web.js', {
-        ...content, ...core, ...reward, ...challenge,
+        ...content, ...core, ...reward, ...challenge, ...journey,
         Date: class extends Date { constructor(...a) { super(...(a.length ? a : [now])); } },
         webMethod: (_, fn) => fn, Permissions: { SiteMember: 'member' },
         currentMember: { getMember: async () => ({ _id: 'offline-test-member' }) },
@@ -40,6 +41,7 @@ function backend(initial = {}) {
 const eligible = (extra = {}) => ({
     _id: 'offline-test-member', memberId: 'offline-test-member',
     foundIds: Array.from({ length: 50 }, (_, i) => i + 1), rewardStatus: 'eligible',
+    forestState: { encounters: ['mothkeeper:wait', 'rootwhisper:protect', 'grumblebark:listen', 'tanglebright:approach'], fragments: [], bonds: {}, completedDays: [] },
     caveEntered: true, lootgremState: { node: 'reward', claimAuthorized: true },
     rewardChoice: 'loyalty_points', ...extra
 });
@@ -232,7 +234,7 @@ test('Forest and Daily resume exactly once after cancelled or successful member 
         const $w = { onReady: fn => ready.push(fn) };
         const source = read(path).replace(/^import.*;\r?\n/gm, '');
         vm.runInNewContext(source, {
-            $w, console,
+            $w, console, setInterval: () => 0,
             authentication: { loggedIn: () => false, onLogin: fn => { loginHandler = fn; }, promptLogin: () => Promise.reject(Error('LOGIN_CANCELLED')) },
             bindRabbitDiscovery: () => {},
             bindRabbitQuestionView: () => { binds++; return { reload: async () => {} }; }
