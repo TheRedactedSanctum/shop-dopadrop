@@ -75,6 +75,11 @@ form[aria-label="Contact us"] input:focus-visible, form[aria-label="Contact us"]
 .dopa-discovery { background-color:transparent !important; background-image:var(--rabbit-art) !important; background-size:contain !important; background-repeat:no-repeat !important; background-position:center !important; border:0 !important; border-radius:24% !important; box-shadow:none; animation:dopa-discovery-drift 7s ease-in-out infinite; }
 .dopa-discovery .button__label, .dopa-discovery .wixui-button__label { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 /* Image controls use the same numbered artwork as native button controls. */
+/* The About marks sit in Wix wrappers whose editor opacity is zero. */
+:where(#comp-mvtx1l7q, #comp-mvv8usrt, #comp-mvvtjeej):has(> .dopa-discovery) {
+    opacity: 1 !important;
+    z-index: 5 !important;
+}
 .dopa-discovery img { opacity:0 !important; }
 .dopa-discovery:focus-within { outline:3px solid #f5ff37; outline-offset:5px; }
 .dopa-discovery.dopa-discovery-touched .button__label, .dopa-discovery.dopa-discovery-touched .wixui-button__label { position:absolute; bottom:calc(100% + 8px); left:0; display:block; width:max-content; max-width:160px; height:auto; margin:0; overflow:visible; clip-path:none; white-space:normal; background:#09090df2; color:#f5ff37 !important; padding:4px; font-size:12px; pointer-events:none; }
