@@ -31,7 +31,7 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const homeSource = read('src/pages/Home.c1dmp.js');
 
     assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-lore-20261127/);
-    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=grimroot-lore-20261127/);
+    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=audience-20261127/);
 });
 
 test('the embedded Home header owns one account link and native member bars are removed', () => {

@@ -1,0 +1,32 @@
+{
+  "founderFileUnchanged": true,
+  "founderSha256": "5d24ba13953edd8ff6d8add27ccdffcc05eaa1c4f55cd49555c156f3fd5be958",
+  "missionUnchangedIn": [
+    "src/public/shop-dopadrop-home-current.html",
+    "docs/index.html",
+    "docs/rabbit-hole.html"
+  ],
+  "missionSha256": {
+    "src/public/shop-dopadrop-home-current.html": "9d9cf8fdc5c54fab3af150a1c37c16f51df8ab08527c0e5b03dd8974ec74adbb",
+    "docs/index.html": "9d9cf8fdc5c54fab3af150a1c37c16f51df8ab08527c0e5b03dd8974ec74adbb",
+    "docs/rabbit-hole.html": "9d9cf8fdc5c54fab3af150a1c37c16f51df8ab08527c0e5b03dd8974ec74adbb"
+  },
+  "groups": [
+    "Autism",
+    "ADHD/ADD",
+    "AuDHD",
+    "OCD",
+    "bipolar disorder",
+    "ODD",
+    "BPD",
+    "DID"
+  ],
+  "factVaultUnchanged": true,
+  "testsPassed": 183,
+  "lintPassed": true,
+  "nativeHomeTitle": "Shop-DopaDrop | Sensory Tools for Different Minds",
+  "searchDescription": "47 tabs open? Autistic, ADHD/ADD or AuDHD; OCD, bipolar disorder, ODD, BPD or DID—you’re welcome here. Sensory tools, fidgets & weird little wonders at Shop-DopaDrop.",
+  "seoAndSocialSaved": true,
+  "socialDescriptionCharacters": 430,
+  "scope": "General audience copy and homepage search/social descriptions; founder About page, Mission blocks and condition-specific facts unchanged."
+}
