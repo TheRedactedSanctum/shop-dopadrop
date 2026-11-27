@@ -19,7 +19,7 @@
 .rabbit-secret{outline:2px solid #c8c52e;outline-offset:3px}
 .rabbit-secret.rabbit-next{outline:3px solid #fff200;outline-offset:5px;animation:grimroot-yellow-glow 1.8s ease-in-out infinite;z-index:5}
 .rabbit-secret.rabbit-touched{outline-width:4px}
-.rabbit-secret.rabbit-found{filter:grayscale(.8) opacity(.48);outline:2px solid #8a873b;animation:none}
+.rabbit-secret.rabbit-found{filter:grayscale(.8) opacity(.48);outline:2px solid #8a873b;animation:none;pointer-events:none!important}
 @keyframes grimroot-yellow-glow{0%,100%{box-shadow:0 0 4px #fff20055}50%{box-shadow:0 0 22px 5px #ffff00;outline-color:#ffff8a}}
 @media(prefers-reduced-motion:reduce){.rabbit-secret.rabbit-next{animation:none;box-shadow:0 0 10px #fff200}}
 </style><script src="popupGems.js?v=hearth-20261127"></script></head><body><nav class="nav"><a class="logo" href="#top">Shop-DopaDrop</a><div><a href="#products">Shop</a><a href="#collections">Collections</a><a data-route="/about" href="#">Our story</a><a data-route="/contact" href="#">Contact</a><a href="https://www.shop--dopadrop.com.au/search" target="_blank" rel="noopener noreferrer" aria-label="Search (opens in a new tab)">Search</a><a data-route="/profile/my/profile" href="#" aria-label="Account">Account</a><a data-route="/cart-page" href="#">Cart →</a></div></nav><main>
@@ -107,10 +107,13 @@ function updateRabbitHud(){
   const id=Number(node.dataset.rabbitId);
   const found=rabbitState.foundIds.includes(id);
   const next=rabbitState.memberReady===true&&!found&&id===rabbitState.nextButtonId;
+  const gated=rabbitState.memberReady!==true&&id!==1;
   node.classList.toggle('rabbit-found',found);
   node.classList.toggle('rabbit-next',next);
   node.classList.toggle('rabbit-touched',next&&rabbitChallenge?.buttonId===id);
-  node.classList.toggle('rabbit-gated',rabbitState.memberReady!==true&&id!==1);
+  node.classList.toggle('rabbit-gated',gated);
+  node.setAttribute('aria-disabled',String(found||gated));
+  node.tabIndex=found||gated?-1:0;
   node.setAttribute('aria-label',`Grimroot Trials discovery ${id}${found?', already saved':next?', next in order':', waiting for earlier discoveries'}`);
  });
  const cave=document.getElementById('rabbitCave');if(cave)cave.disabled=!rabbitState.caveUnlocked;

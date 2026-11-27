@@ -58,10 +58,18 @@ export async function bindRabbitDiscovery($w, options = {}) {
     const setLabel = (slot, label) => {
         if (slot && typeof slot.button.label === 'string') slot.button.label = label;
     };
+    const setInteractive = (slot, interactive) => {
+        if (!slot?.button) return;
+        // Some original marks are Images, so also guard their handler and tab stop.
+        if (interactive) slot.button.enable?.();
+        else slot.button.disable?.();
+        if ('tabIndex' in slot.button) slot.button.tabIndex = interactive ? 0 : -1;
+    };
     const expose = (slot, label, ariaLabel) => {
         collapseAll();
         slots.forEach(candidate => candidate.button?.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-found', 'dopa-discovery-touched'));
         slot?.button.customClassList?.add('dopa-discovery-touched');
+        setInteractive(slot, true);
         setLabel(slot, label);
         if (slot?.button.accessibility && ariaLabel) slot.button.accessibility.ariaLabel = ariaLabel;
         slot?.button.expand();
@@ -76,6 +84,7 @@ export async function bindRabbitDiscovery($w, options = {}) {
         slots.forEach(slot => {
             if (!slot.button) return;
             const found = foundIds.has(slot.buttonId);
+            setInteractive(slot, !found);
             const next = !found && slot.buttonId === nextState?.nextButtonId && nextState.nextPage === route;
             slot.button.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-found', 'dopa-discovery-touched');
             if (found) slot.button.customClassList?.add('dopa-discovery-found');
@@ -100,13 +109,18 @@ export async function bindRabbitDiscovery($w, options = {}) {
     const retrySlot = (preferred, message) => {
         activeButtonId = null;
         challenges.clear();
-        const slot = preferred?.button ? preferred : availableSlots[0];
+        const slot = preferred?.button && !foundIds.has(preferred.buttonId)
+            ? preferred
+            : availableSlots.find(candidate => !foundIds.has(candidate.buttonId));
+        // A failed refresh must not turn a saved discovery into a retry button.
+        if (!slot) return null;
         if (lastState) {
             availableSlots.forEach(candidate => {
                 candidate.button.customClassList?.remove('dopa-discovery-next', 'dopa-discovery-touched');
                 candidate.button.expand();
             });
             slot.button.customClassList?.add('dopa-discovery-touched');
+            setInteractive(slot, true);
             setLabel(slot, 'Retry loading The Grimroot Trials');
         } else expose(slot, 'Retry loading The Grimroot Trials', 'Retry loading The Grimroot Trials');
         setStatus(slot, message);
@@ -116,6 +130,8 @@ export async function bindRabbitDiscovery($w, options = {}) {
         challenges.clear();
         if (!(await authentication.loggedIn())) {
             activeButtonId = null;
+            foundIds.clear();
+            lastState = null;
             return signInSlot();
         }
         const state = await getHuntState();
@@ -131,6 +147,7 @@ export async function bindRabbitDiscovery($w, options = {}) {
 
     availableSlots.forEach(slot => {
         const handleTap = async () => {
+            if (foundIds.has(slot.buttonId)) return;
             if (inFlight) {
                 if (armingButtonId === slot.buttonId) secondTapQueued = true;
                 return;

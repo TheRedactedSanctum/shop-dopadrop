@@ -31,7 +31,7 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const homeSource = read('src/pages/Home.c1dmp.js');
 
     assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-hearth-popups-20261127/);
-    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=hearth-dialogue-20261127/);
+    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=grimroot-saved-inactive-20261127/);
 });
 
 test('the embedded Home header owns one account link and native member bars are removed', () => {
@@ -248,6 +248,82 @@ test('homepage discoveries remain reliable 44px touch targets on mobile', () => 
         assert.match(html, /\.rabbit-secret\{[^}]*touch-action:manipulation/);
         assert.match(html, /@media\(max-width:600px\)\{\.rabbit-secret\{[^}]*min-width:44px[^}]*min-height:44px/);
     }
+});
+
+test('saved homepage marks stay visible but ignore pointer and keyboard activation until fresh state enables them', async () => {
+    const html = read('src/public/shop-dopadrop-home-current.html');
+    assert.equal(read('docs/index.html'), html);
+    assert.match(html, /\.rabbit-secret\.rabbit-found\{[^}]*pointer-events:none!important/);
+    const nodes = [1, 2, 3, 4].map(id => {
+        const classes = new Set();
+        return {
+            dataset: { rabbitId: String(id) },
+            attributes: {}, handlers: {}, hidden: false, tabIndex: 0,
+            parentElement: { removeAttribute() {} },
+            classList: {
+                add(name) { classes.add(name); },
+                toggle(name, active) { active ? classes.add(name) : classes.delete(name); },
+                contains(name) { return classes.has(name); }
+            },
+            setAttribute(name, value) { this.attributes[name] = String(value); },
+            addEventListener(name, handler) { this.handlers[name] = handler; }
+        };
+    });
+    const controls = Object.fromEntries(['rabbitCount', 'rabbitSignIn', 'rabbitCave', 'rabbitForest', 'rabbitDaily']
+        .map(id => [id, {}]));
+    const requests = [];
+    const context = vm.createContext({
+        rabbitState: { foundIds: [], found: 0, required: 50, caveUnlocked: false },
+        rabbitChallenge: null,
+        document: {
+            querySelectorAll: () => nodes,
+            getElementById: id => controls[id],
+            body: { append() {} }
+        },
+        el: () => ({ querySelector: () => ({}) }),
+        rabbitRequest: async action => {
+            requests.push(action);
+            if (action !== 'state') throw Error('Saved marks must not request a challenge or claim');
+            return { foundIds: [1], found: 1, required: 50, nextButtonId: 2, caveUnlocked: false };
+        },
+        rabbitToast() { throw Error('Saved marks must not display another interaction'); },
+        send() { throw Error('Saved marks must not prompt login'); },
+        enterRabbitCave() {}, showForest() {}, showDaily() {},
+        console, Date, setTimeout
+    });
+    const interactions = html.slice(html.indexOf('function updateRabbitHud(){'), html.indexOf('function showDialogue(result)'));
+    const installation = html.slice(html.indexOf('function installRabbitHunt(){'), html.indexOf('function installStandaloneGem(){'));
+    vm.runInContext(interactions + '\n' + installation, context);
+    context.installRabbitHunt();
+    await new Promise(resolve => setImmediate(resolve));
+
+    const saved = nodes[0];
+    assert.equal(saved.attributes['aria-disabled'], 'true');
+    assert.equal(saved.tabIndex, -1);
+    assert.equal(saved.classList.contains('rabbit-found'), true);
+    assert.equal(nodes.every(node => !node.hidden), true);
+    assert.equal(nodes[1].attributes['aria-disabled'], 'false');
+    assert.equal(nodes[1].tabIndex, 0);
+    await saved.handlers.click();
+    let prevented = 0;
+    for (const key of ['Enter', ' ']) saved.handlers.keydown({ key, preventDefault() { prevented++; } });
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(prevented, 2);
+    assert.deepEqual(requests, ['state']);
+
+    // A new authoritative run snapshot restores only marks it reports as unfinished.
+    context.rabbitState = { ...context.rabbitState, foundIds: [], found: 0, nextButtonId: 1 };
+    context.updateRabbitHud();
+    assert.equal(saved.attributes['aria-disabled'], 'false');
+    assert.equal(saved.tabIndex, 0);
+    assert.equal(saved.classList.contains('rabbit-found'), false);
+
+    context.rabbitState = { ...context.rabbitState, memberReady: false };
+    context.updateRabbitHud();
+    assert.equal(saved.attributes['aria-disabled'], 'false', 'the first mark retains its signup entry point');
+    assert.equal(nodes[1].attributes['aria-disabled'], 'true');
+    assert.equal(nodes[1].tabIndex, -1);
+    assert.equal(nodes.every(node => !node.hidden), true);
 });
 
 test('homepage discovery bands stay above decorative and text layers without leaving their bands', () => {

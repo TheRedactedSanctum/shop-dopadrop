@@ -25,12 +25,16 @@ function makeButton() {
             remove(...names) { names.forEach(name => this.owner.classes.delete(name)); }
         },
         accessibility: {},
+        enabled: true,
+        tabIndex: 0,
         collapsed: false,
         collapseCount: 0,
         expandCount: 0,
         clickHandler: null,
         collapse() { this.collapsed = true; this.collapseCount += 1; },
         expand() { this.collapsed = false; this.expandCount += 1; },
+        disable() { this.enabled = false; return Promise.resolve(); },
+        enable() { this.enabled = true; return Promise.resolve(); },
         onClick(handler) { this.clickHandler = handler; }
     };
     button.customClassList.owner = button;
@@ -40,6 +44,8 @@ function makeButton() {
 function makeImageButton() {
     const element = makeButton();
     delete element.label;
+    delete element.disable;
+    delete element.enable;
     Object.defineProperty(element, 'label', {
         set() { throw new Error('Image elements do not support button labels'); }
     });
@@ -107,6 +113,9 @@ test('all placed marks remain visible while the next mark advances and saved mar
 
     assert.deepEqual(foundCalls, [[32, '/about', 'token-32']]);
     assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), true);
+    assert.equal(elements['#rabbitDiscovery32'].enabled, false);
+    assert.equal(elements['#rabbitDiscovery32'].tabIndex, -1);
+    assert.equal(elements['#rabbitDiscovery33'].enabled, true);
     assert.equal(elements['#rabbitDiscovery33'].classes.has('dopa-discovery-next'), true);
     assert.equal(elements['#rabbitDiscovery32'].collapsed, false);
     assert.equal(elements['#rabbitDiscovery33'].collapsed, false);
@@ -277,18 +286,60 @@ test('future and completed marks remain visible without granting another discove
     const { elements, $w } = makeWixElements(['rabbitDiscovery32', 'rabbitDiscovery33', 'rabbitDiscovery34']);
     let challenges = 0;
     let finds = 0;
+    let stateReads = 0;
     const bind = loadBinder(baseDeps({
-        getHuntState: async () => ({ foundIds: [32], nextButtonId: 33, nextPage: '/about' }),
+        getHuntState: async () => {
+            stateReads += 1;
+            return { foundIds: [32], nextButtonId: 33, nextPage: '/about' };
+        },
         beginButtonChallenge: async () => { challenges += 1; },
         findButton: async () => { finds += 1; }
     }));
     await bind($w);
     await elements['#rabbitDiscovery34'].clickHandler();
+    const readsBeforeSavedTap = stateReads;
     await elements['#rabbitDiscovery32'].clickHandler();
+    assert.equal(stateReads, readsBeforeSavedTap);
     assert.equal(challenges, 0);
     assert.equal(finds, 0);
     assert.equal(Object.values(elements).every(element => !element.collapsed), true);
     assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), true);
+    assert.equal(elements['#rabbitDiscovery32'].enabled, false);
+    assert.equal(elements['#rabbitDiscovery32'].tabIndex, -1);
+});
+
+test('saved image marks remain visible but stop keyboard and handler activation', async () => {
+    const image = makeImageButton();
+    let stateReads = 0;
+    const bind = loadBinder(baseDeps({
+        placementsForRoute: () => [aboutSlots[0]],
+        elementIdsForRoute: () => ['rabbitDiscovery32'],
+        getHuntState: async () => {
+            stateReads += 1;
+            return { foundIds: [32], nextButtonId: 33, nextPage: '/about' };
+        },
+        beginButtonChallenge: async () => assert.fail('saved image requested a challenge'),
+        findButton: async () => assert.fail('saved image requested a discovery')
+    }));
+    await bind(selector => selector === '#rabbitDiscovery32' ? image : null);
+    await image.clickHandler();
+    assert.equal(stateReads, 1);
+    assert.equal(image.collapsed, false);
+    assert.equal(image.tabIndex, -1);
+    assert.match(image.accessibility.ariaLabel, /already saved/);
+});
+
+test('a fresh authoritative state restores a previously saved mark when it is unfinished', async () => {
+    const { elements, $w } = makeWixElements(['rabbitDiscovery32', 'rabbitDiscovery33', 'rabbitDiscovery34']);
+    let state = { foundIds: [32], nextButtonId: 33, nextPage: '/about' };
+    const bind = loadBinder(baseDeps({ getHuntState: async () => state }));
+    await bind($w);
+    assert.equal(elements['#rabbitDiscovery32'].enabled, false);
+    state = { foundIds: [], nextButtonId: 32, nextPage: '/about' };
+    await bind($w);
+    assert.equal(elements['#rabbitDiscovery32'].enabled, true);
+    assert.equal(elements['#rabbitDiscovery32'].tabIndex, 0);
+    assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), false);
 });
 
 test('a fast double tap saves the mark while the first tap is still arming it', async () => {
