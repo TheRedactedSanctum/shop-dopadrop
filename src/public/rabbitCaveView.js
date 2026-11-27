@@ -2,7 +2,7 @@
 // all eligibility and issuance decisions remain on the authenticated backend.
 export function caveSnapshot(state = {}, dialogue, status) {
     const base = {
-        mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Ember',
+        mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Ember · Tanglebright’s Lair',
         progress: { current: 0, total: 3 }, meta: ['PRIVATE MEMBER PROGRESS', 'REWARDS DISABLED']
     };
     if (!state.caveUnlocked) return {
@@ -32,7 +32,7 @@ export function caveSnapshot(state = {}, dialogue, status) {
     };
     return {
         ...base, progress: { current: state.lootgrem?.node === 'welcome' ? 0 : 1, total: 3 },
-        question: dialogue?.text || 'The campfire waits.', hint: 'Choose a response. Your dialogue is saved.',
+        question: dialogue?.text || 'The campfire waits.', hint: 'Deep inside the cave, beyond the Catacombs of Glory, Tanglebright’s lair awaits. Choose a response. Your dialogue is saved.',
         choices: (dialogue?.choices || []).map(choice => ({ id: choice.id, label: choice.text, action: 'dialogue' })),
         status: status || { kind: 'ready', message: 'The fire is listening.' }
     };
