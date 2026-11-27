@@ -5,6 +5,23 @@ const { bindRabbitQuestionView, QUESTION_VIEW_URL } = require('../src/public/rab
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
+test('retiring prototype overlays leaves the real hunt controls untouched', () => {
+    const legacy = { label: 'Listen out for Tanglebright', collapsed: false, collapse() { this.collapsed = true; } };
+    const mark = { label: 'A Grimroot mark', collapsed: false, collapse() { this.collapsed = true; } };
+    const intro = { text: 'Choose a forest encounter. LOOTGREM is watching.', collapsed: false, collapse() { this.collapsed = true; } };
+    const view = { postMessage() {}, onMessage() {} };
+    const $w = id => {
+        if (id === '#rabbitQuestionView') return view;
+        if (id === 'Text') return [intro];
+        if (id === 'Button') return [legacy, mark];
+        throw new Error('not present');
+    };
+    bindRabbitQuestionView($w, { load() {}, submit() {}, mapResult() {}, mapError() {} });
+    assert.equal(legacy.collapsed, true);
+    assert.equal(intro.collapsed, true);
+    assert.equal(mark.collapsed, false);
+});
+
 function harness(overrides = {}) {
     const posted = [];
     let listener;

@@ -33,8 +33,18 @@ export function bindRabbitQuestionView($w, options = {}) {
         const text = (element.text || '').trim();
         if (/^THE (?:RABBIT HOLE|GRIMROOT TRIALS)\s*[—-]/i.test(text)
             || ['The Grinning Wrongwoods', 'The Omens Retreat', 'The Last Ember'].includes(text)
+            || text === 'Choose a forest encounter. LOOTGREM is watching.'
             || text === 'The cave is sealed until all 50 hidden forest buttons are found.') element.collapse();
     });
+    // Match old prototype controls by their visible label so their retirement
+    // does not depend on generated canvas IDs or layout CSS precedence.
+    const retiredLabels = new Set(['Listen out for Tanglebright', 'Wait with the Mothkeeper', 'Protect a tiny shoot', 'Submit answer']);
+    try {
+        $w('Button').forEach(button => {
+            const label = typeof button.label === 'string' ? button.label.replace(/\s+/g, ' ').trim() : '';
+            if (retiredLabels.has(label) && typeof button.collapse === 'function') button.collapse();
+        });
+    } catch (_) { /* this page has no native prototype buttons */ }
     for (const id of ['#lootgremWho', '#lootgremReward', '#lootgremClaim', '#dailyAnswer', '#mothkeeperWait', '#rootwhisperProtect']) {
         try {
             const legacy = $w(id);

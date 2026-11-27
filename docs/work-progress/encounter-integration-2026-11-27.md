@@ -40,3 +40,10 @@ Local Opera extension connected through Browser js, browser id0. Variables agent
 - All four guardian branches, completed-guardian revisits (including while the next gate is locked), Cave optional lore, safe citations and Daily fact/catch-up flow implemented.
 - 181 tests and lint passed after portal retirement; one further locked-hub revisit test added. Final count follows in publication evidence.
 - Portal page removal saved in Wix; URL redirect is live. Source deletion and full dialogue update are ready for the next main commit.
+
+## Live evidence checkpoint
+- Source release 80af67c published via Wix. Forest iframe loads revision grimroot-lore-20261127.
+- Live Forest default at member count45 showed three completed guardian revisits and Tanglebright still locked at50. Grumblebark revisit showed his 843-years allegedly line; a fact displayed its NIDCD source URL; crew branch displayed Morgan, Harper, Indi and Casey. Hunt marks45/50 still44px; no progress changed.
+- Live Daily verification redirected to /auth/access-restricted for this signed-in member. Existing access rule is not changed. Cave lore remains covered by tests and its50-mark access guard; no reward request made.
+- Two legacy Forest overlays survived DOM-ID CSS despite matching the expected generated IDs; the exact style-precedence cause was not established. Replaced that approach with semantic label-based collapse in rabbitQuestionBridge. Final patch tests, commit, publish and live overlay verification pending.
+- Connected Browser aliases: cleanupEditor is tab222244809; verificationTab tab222244812, currently Forest crew branch (marked deliverable); prior auditAbout tab222244801 is being used to browse the shop, avoid redirecting it. New failed Daily tab222244815 is Access Restricted. Browser activity is closed.
