@@ -34,11 +34,12 @@ The embedded header owns one Account link. Duplicate native member bars are remo
 
 Hosted homepage, launcher and question-renderer URLs use
 `https://theredactedsanctum.github.io/shop-dopadrop/` with the
-`pathways-20261126` cache revision. The retired GitHub account hostname must not
+`grimroot-lore-20261127` cache revision. The retired GitHub account hostname must not
 be used by a Wix controller.
 
-The legacy public `/home-1` address returns to `/`; its saved portal design
-remains in the editor. A missing portal component also falls back to Home.
+The obsolete Home - portal goblin page was deleted from Wix Studio on 27 November 2026.
+The legacy public `/home-1` address returns to `/` through SEO redirect
+`41ecb72a-789f-476b-ab92-d1614620bd10`. Its retired Velo module is removed.
 Direct visits to the Wix Reviews
 confirmation page without submission query context return to
 `/reviews-collection-page`, avoiding the app's contextless `undefined` link.

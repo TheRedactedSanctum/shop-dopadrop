@@ -13,7 +13,8 @@ import { addFind, normaliseState, publicState } from './rabbitCore';
 import { rabbitActivityFacts } from './rabbitActivity';
 import { issueChallenge, verifyChallenge } from './rabbitChallenge';
 import { buildRabbitDashboard } from './rabbitDashboard';
-import { buildForestStageView } from './rabbitForestView';
+import { buildCaveLore, buildForestDialogue, GUARDIAN_VOICES } from './encounterDialogue';
+import { availableDailyDay, factForDay } from './encounterVault';
 import { recordDailyResult } from './rabbitDailyGuard';
 import { beginCheckoutCodeClaim, beginRewardClaim, finalizeRewardClaim, markRewardClaimUncertain } from './rabbitReward';
 import { loadDopaProfile, memberProfileView, recordDopaActivity } from './dopaProfiles';
@@ -164,9 +165,14 @@ export const chooseLootgrem = webMethod(Permissions.SiteMember, async (node, opt
     return { ...transition.response, ...publicState(state), rewardIssuanceEnabled: REWARD_ISSUANCE_ENABLED };
 });
 
-export const getForestContent = webMethod(Permissions.SiteMember, async () => {
+export const getForestContent = webMethod(Permissions.SiteMember, async (request = {}) => {
     const id = await memberId();
-    return buildForestStageView(await load(id));
+    return buildForestDialogue(await load(id), request);
+});
+
+export const getCaveLore = webMethod(Permissions.SiteMember, async (request = {}) => {
+    const id = await memberId();
+    return buildCaveLore(await load(id), request);
 });
 
 export const forestEncounter = webMethod(Permissions.SiteMember, async (characterId, actionId) => {
@@ -195,7 +201,7 @@ export const forestEncounter = webMethod(Permissions.SiteMember, async (characte
         // Profile synchronization cannot invalidate a durable forest encounter.
         console.error('DopaVerse forest activity sync failed:', error);
     }
-    return { dialogue: encounter.line, affinity: forest.bonds[characterId], fragment: encounter.fragment, trusted: forest.bonds[characterId] >= 3, pointsAwarded: 0, stage: encounterNumber + 1 };
+    return { dialogue: GUARDIAN_VOICES[characterId]?.after || encounter.line, affinity: forest.bonds[characterId], fragment: encounter.fragment, trusted: forest.bonds[characterId] >= 3, pointsAwarded: 0, stage: encounterNumber + 1 };
 });
 
 export const getDailyContent = webMethod(Permissions.SiteMember, async () => {
@@ -203,12 +209,13 @@ export const getDailyContent = webMethod(Permissions.SiteMember, async () => {
     const state = await load(id);
     const currentDay = campaignDay(new Date(), CAMPAIGN_START);
     const completed = state.forestState?.completedDays || [];
-    const day = currentDay ? DAILY_CONTENT[currentDay - 1] : null;
+    const availableDay = availableDailyDay(currentDay, completed);
+    const day = availableDay ? DAILY_CONTENT[availableDay - 1] : null;
     return {
         campaignStart: CAMPAIGN_START,
         currentDay,
         completedDays: completed,
-        entry: day ? { day: day.day, title: day.title, teaser: day.teaser, prompt: day.prompt, choices: day.choices } : null,
+        entry: day ? { day: day.day, title: day.title, teaser: day.teaser, prompt: day.prompt, choices: day.choices, fact: factForDay(day.day) } : null,
         pointsAwardedByDailyContent: 0
     };
 });

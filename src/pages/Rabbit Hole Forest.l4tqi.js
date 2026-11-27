@@ -37,16 +37,17 @@ $w.onReady(function () {
         }
         stage = view;
         choiceMap = new Map((view.choices || []).map(choice => [choice.id, choice]));
-        const guardianNumber = Math.min(view.progress.current + 1, view.progress.total);
+        const guardianNumber = view.guardian?.ordinal || Math.min(view.progress.current + 1, view.progress.total);
         return {
             mode: 'forest',
             guardianKey: view.guardian?.id || '',
             eyebrow: view.guardian ? `The Grinning Wrongwoods · Guardian ${guardianNumber} · ${view.guardian.label}` : 'The Grinning Wrongwoods',
             progress: view.progress,
             question: view.prompt,
-            hint: view.guardian
+            fact: view.fact,
+            hint: view.hint || (view.guardian
                 ? `${view.guardian.difficulty} path · unlocks at ${view.guardian.threshold} discoveries`
-                : 'Every guardian has answered.',
+                : 'Every guardian has answered.'),
             choices: (view.choices || []).map(choice => ({
                 id: choice.id,
                 label: choice.label,
@@ -57,7 +58,7 @@ $w.onReady(function () {
                 ? { kind: 'completed', message: 'All four guardians have opened the cave path.' }
                 : view.locked
                     ? { kind: 'locked', message: 'Keep discovering hidden buttons to unlock this guardian.' }
-                    : { kind: 'ready', message: 'Choose the guardian action.' })
+                    : { kind: 'ready', message: 'Stay for a conversation, or choose the guardian action.' })
         };
     };
 
@@ -68,6 +69,10 @@ $w.onReady(function () {
         submit: async action => {
             const choice = choiceMap.get(action.choiceId);
             if (action.action !== 'encounter' || !choice) throw new Error('INVALID_FOREST_CHOICE');
+            if (choice.kind === 'story') return {
+                browsing: true,
+                next: await getForestContent({ guardianKey: choice.guardianKey, branch: choice.branch, cursor: choice.cursor })
+            };
             try {
                 const outcome = await forestEncounter(choice.characterId, choice.actionId);
                 return { outcome, next: await getForestContent() };
@@ -79,7 +84,11 @@ $w.onReady(function () {
                 throw error;
             }
         },
-        mapResult: result => snapshot(result.next, result.next.completed
+        mapResult: result => snapshot(result.next, result.browsing
+            ? { kind: 'ready', message: 'Take your time. Your saved progress has not changed.' }
+            : result.next.journeyComplete
+                ? { kind: 'ready', message: 'All four guardians have answered. You can revisit their conversations.' }
+            : result.next.completed
             ? { kind: 'completed', message: 'All four guardians have opened the cave path.' }
             : result.next.locked
                 ? { kind: 'locked', message: result.stale

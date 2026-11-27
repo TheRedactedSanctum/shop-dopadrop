@@ -1,0 +1,39 @@
+{
+  "importedFacts": 253,
+  "whisperEligible": 190,
+  "learningOnly": 63,
+  "representedTopics": 203,
+  "topicIndexRows": 289,
+  "files": [
+    {
+      "name": "Shop-DopaDrop-Fact-Vault(1).csv",
+      "sha256": "bc36a8d242b6a80e269cd8347a68827eef9986db3125ce44d4156933fdfe1234",
+      "bytes": 96240
+    },
+    {
+      "name": "Shop-DopaDrop-Fact-Vault-Topic-Index(1).csv",
+      "sha256": "5a80934b1f3a7a18b12cea8b47943a6183626230a1f485830f6d5d63e13ed788",
+      "bytes": 17573
+    },
+    {
+      "name": "facts-vault-COUNTS-backup-2026-10-22.md",
+      "sha256": "14a74b5282e6f1c4b44fc8cf55b8e272e393d96e787183538f817801cc08ac05",
+      "bytes": 5705
+    },
+    {
+      "name": "facts-vault-INDEX-backup-2026-10-22.md",
+      "sha256": "341695dc84409794075ddf3c987f9f6029008934a0453dc677a630da2128ce32",
+      "bytes": 8157
+    },
+    {
+      "name": "long-task-autonomy-spine.md",
+      "sha256": "292d00087077d20ad269169f635b79ede1766898da07a448b3226dc939c1cd8a",
+      "bytes": 27141
+    },
+    {
+      "name": "roles.md",
+      "sha256": "92765ab4c3141e7c47e9a2c47320ccd49c3949b40c200a2f396dcc3badd87777",
+      "bytes": 2378
+    }
+  ]
+}

@@ -77,7 +77,7 @@ test('the member gem does not prompt an already signed-in player to log in again
     assert.equal(retired.collapsed, true);
 });
 
-for (const file of ['src/pages/Home.c1dmp.js', 'src/pages/Home - portal goblin.loevn.js']) {
+for (const file of ['src/pages/Home.c1dmp.js']) {
     test(`${file}: catalogue absolute URLs navigate through the Wix page router`, async () => {
         const app = pageHarness(file, { products: [{
             name: 'Live product', visible: true, mainMedia: '', price: 12.95,
@@ -91,16 +91,6 @@ for (const file of ['src/pages/Home.c1dmp.js', 'src/pages/Home - portal goblin.l
         assert.equal(app.navigated.length, 1);
     });
 }
-
-test('the legacy portal returns visitors to Home when its saved embed is absent', () => {
-    const app = pageHarness('src/pages/Home - portal goblin.loevn.js', { missingEmbed: true });
-    assert.deepEqual(app.navigated, ['/']);
-});
-
-test('the published legacy homepage alias reaches Home even when its broken embed exists', () => {
-    const app = pageHarness('src/pages/Home - portal goblin.loevn.js', { locationPath: ['home-1'] });
-    assert.deepEqual(app.navigated, ['/']);
-});
 
 test('a direct review confirmation visit has a real reviews destination', () => {
     const app = pageHarness('src/pages/Thank You Page.ct1pt.js');

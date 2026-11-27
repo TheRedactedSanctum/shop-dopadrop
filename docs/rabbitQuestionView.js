@@ -32,6 +32,19 @@
         return { valid: false, disabled: true, choices: [] };
     }
 
+    function cleanFact(value) {
+        if (!value || typeof value !== 'object') return null;
+        const text = cleanText(value.text, 1000);
+        const sourceTitle = cleanText(value.sourceTitle, 200);
+        const url = cleanText(value.sourceUrl, 2048);
+        if (!text || !sourceTitle || !/^https:\/\//i.test(url)) return null;
+        try {
+            const parsed = new URL(url);
+            if (parsed.username || parsed.password || !parsed.hostname) return null;
+            return { id: cleanText(value.id, 64), text, sourceTitle, sourceUrl: parsed.href };
+        } catch (_) { return null; }
+    }
+
     function buildQuestionView(snapshot) {
         if (!snapshot || typeof snapshot !== 'object' || !MODES.includes(snapshot.mode)) return invalidView();
         const question = cleanText(snapshot.question, 1000);
@@ -63,6 +76,7 @@
             progress: { current, total, percent: Math.min(100, Math.round((current / total) * 100)) },
             question,
             hint: cleanText(snapshot.hint, 500),
+            fact: cleanFact(snapshot.fact),
             choices: choices.map(choice => ({ ...choice, disabled })),
             meta,
             status: { kind: statusKind, message: cleanText(snapshot.status?.message, 500) },

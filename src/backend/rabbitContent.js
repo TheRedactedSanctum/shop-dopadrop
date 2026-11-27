@@ -69,18 +69,18 @@ export const HUNT_ROUTE = Object.freeze(HUNT_PLACEMENTS.map(placement => placeme
 
 export const LOOTGREM_DIALOGUE = {
     welcome: {
-        text: 'The fire crackles. Tanglebright, the final Loot Seeker, watches you. “Fifty little secrets. And you found every one.”',
+        text: 'The fire crackles. Tanglebright sets out two cups. One has not been invented yet. “Fifty little secrets. And you found every one. Sit. The chair only bites if asked politely.”',
         choices: [
             { id: 'who', text: 'Who are you?' },
             { id: 'reward', text: 'I came for the treasure.' }
         ]
     },
     who: {
-        text: '“I am Tanglebright, the Loot Seeker. I keep the final choice: five hundred loyalty points, or a checkout reward.”',
+        text: '“Tanglebright. The final antagonist, if you like labels. I prefer host. I keep the final choice: five hundred loyalty points, or a checkout reward. Even a smiling disaster should honour the offer.”',
         choices: [{ id: 'reward', text: 'And my treasure?' }]
     },
     reward: {
-        text: '“Five hundred points, once per traveller. Shall I place them in your pouch?”',
+        text: '“Five hundred points, once per traveller, or the checkout reward instead. Choose, then confirm. Thinking about it is free. I shall sit comfortably in the small ruin of my expectations.”',
         choices: [
             { id: 'claim', text: 'Yes. Claim my 500 points.' },
             { id: 'code', text: 'Give me the checkout code instead.' },
@@ -88,7 +88,7 @@ export const LOOTGREM_DIALOGUE = {
         ]
     },
     later: {
-        text: '“The fire will wait.”',
+        text: '“The fire will wait. I have asked the clock to relax. It is doing its best.”',
         choices: [{ id: 'reward', text: 'I am ready now.' }]
     }
 };

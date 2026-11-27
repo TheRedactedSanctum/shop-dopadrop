@@ -1,6 +1,6 @@
 import { authentication } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
-import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode } from 'backend/rabbitHole.web';
+import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode, getCaveLore } from 'backend/rabbitHole.web';
 import { bindRabbitQuestionView } from 'public/rabbitQuestionBridge';
 import { caveSnapshot } from 'public/rabbitCaveView';
 
@@ -9,12 +9,28 @@ $w.onReady(function () {
     let dialogue;
     let currentNode = 'welcome';
     let shownChoices = new Set();
+    let loreView = null;
+    let loreCursor = 0;
     const render = status => {
-        const snapshot = caveSnapshot(state, dialogue, status);
+        const snapshot = loreView ? {
+            mode: 'cave', guardianKey: 'tanglebright', eyebrow: 'The Last Ember',
+            progress: { current: 0, total: 3 }, question: loreView.prompt,
+            hint: loreView.hint, fact: loreView.fact, choices: loreView.choices,
+            meta: ['THE ALCHEMIST’S VAULT', 'NO REWARD CLAIMED'],
+            status: status || { kind: 'ready', message: 'The offer waits while we talk.' }
+        } : caveSnapshot(state, dialogue, status);
+        if (!loreView && snapshot.status.kind === 'ready' && !state.lootgrem?.claimAuthorized) {
+            snapshot.choices.push(
+                { id: 'story-fact', label: 'One beautifully odd thing before the offer', action: 'dialogue' },
+                { id: 'story-crew', label: 'Who keeps the shop running?', action: 'dialogue' },
+                { id: 'story-guide', label: 'Explain the final choice', action: 'dialogue' }
+            );
+        }
         shownChoices = new Set(snapshot.choices.map(choice => choice.id));
         return snapshot;
     };
     const accept = result => {
+        loreView = null;
         state = { ...state, ...result };
         currentNode = result.lootgrem?.node || result.next || currentNode;
         if (result.dialogue) dialogue = result.dialogue;
@@ -44,6 +60,13 @@ $w.onReady(function () {
                 return { state: await enterCave() };
             }
             if (action.choiceId === 'reload_cave') return { state: await enterCave() };
+            if (action.choiceId === 'story-back') return { clearLore: true };
+            if (['story-fact', 'story-crew', 'story-guide', 'story-another'].includes(action.choiceId)) {
+                const branch = action.choiceId === 'story-crew' ? 'crew'
+                    : action.choiceId === 'story-guide' ? 'guide' : 'fact';
+                loreCursor = action.choiceId === 'story-another' ? loreCursor + 1 : 0;
+                return { lore: await getCaveLore({ branch, cursor: loreCursor }) };
+            }
             if (action.choiceId === 'postpone_reward') {
                 // No backend write: the already-saved choice survives leaving/reloading.
                 wixLocationFrontend.to('/');
@@ -57,6 +80,8 @@ $w.onReady(function () {
             return { state: await chooseLootgrem(currentNode, action.choiceId) };
         },
         mapResult: result => {
+            if (result.clearLore) loreView = null;
+            if (result.lore) loreView = result.lore;
             if (result.state) accept(result.state);
             if (result.claim) {
                 if (result.claim.status === 'disabled') return render({ kind: 'ready', message: 'Reward issuance is still disabled. Your choice is saved; no points or checkout code were issued.' });

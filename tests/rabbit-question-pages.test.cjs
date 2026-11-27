@@ -24,7 +24,7 @@ test('Daily uses stable completion and safe attempt-limit feedback', () => {
     const source = read('src/pages/Rabbit Hole Daily.i6ju2.js');
 
     assert.match(source, /result\.correct/);
-    assert.match(source, /kind:\s*'completed'/);
+    assert.match(source, /canContinue\s*\?\s*'ready'\s*:\s*'completed'/);
     assert.doesNotMatch(source, /currentDay\s*\+\s*1|entry\.day\s*\+\s*1/);
     assert.match(source, /DAILY_ATTEMPT_LIMITED/);
     assert.match(source, /seconds/);
@@ -36,7 +36,7 @@ test('Forest exposes one authenticated safe stage and no generated button IDs', 
     const backend = read('src/backend/rabbitHole.web.js');
     const source = read('src/pages/Rabbit Hole Forest.l4tqi.js');
 
-    assert.match(backend, /buildForestStageView/);
+    assert.match(backend, /buildForestDialogue/);
     assert.match(backend, /export const getForestContent\s*=\s*webMethod\(Permissions\.SiteMember/);
     assert.match(source, /getForestContent/);
     assert.match(source, /bindRabbitQuestionView/);
