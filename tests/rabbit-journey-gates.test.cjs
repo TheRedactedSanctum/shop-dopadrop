@@ -33,5 +33,7 @@ test('tavern, 50 discoveries, catacombs, lair order cannot be skipped',()=>{
 test('prior completed guardians and reward progress are preserved',()=>{
     const s=state();s.forestState.encounters.push('tanglebright:approach');
     assert.equal(journeyPhase(s,'cave'),'reward');
-    const early=state();early.forestState.encounters.pop();assert.equal(journeyPhase(early,'tavern'),'forest');
+    const early=state();early.forestState.encounters.pop();assert.equal(journeyPhase(early,'tavern'),'tavern-welcome');
+    assert.equal(journeyPhase(early,'cave'),'forest');
+    assert.throws(() => advanceJourneyState(early,'tavern','rest'), /LOCKED/);
 });

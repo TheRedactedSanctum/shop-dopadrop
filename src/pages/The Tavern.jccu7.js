@@ -11,6 +11,11 @@ $w.onReady(() => {
             const routes = { forest: '/rabbit-hole-forest', cave: '/rabbit-hole-cave' };
             if (routes[choiceId]) { wixLocationFrontend.to(routes[choiceId]); return getJourneyStage('tavern'); }
             if (choiceId !== 'rest') throw new Error('INVALID_TAVERN_CHOICE');
+            const stage = await getJourneyStage('tavern');
+            if (stage.phase === 'tavern-welcome') return {
+                ...stage,
+                status: { kind: 'ready', message: 'You settle by the fire. Take as long as you need.' }
+            };
             return advanceJourney('tavern', choiceId);
         },
         mapResult: result => result,

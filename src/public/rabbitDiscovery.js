@@ -147,9 +147,9 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 const challenge = challenges.get(slot.buttonId);
                 if (!challenge) {
                     challenges.set(slot.buttonId, await beginButtonChallenge(slot.buttonId, route));
-                    setLabel(slot, 'Touch the mark again');
+                    setLabel(slot, 'The mark stirred');
                     slot.button.customClassList?.add('dopa-discovery-touched');
-                    setStatus(slot, 'The mark stirred. Touch it once more.');
+                    setStatus(slot, 'The mark stirred.');
                     return;
                 }
                 const result = await findButton(slot.buttonId, route, challenge.token);

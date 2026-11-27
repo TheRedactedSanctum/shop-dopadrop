@@ -98,7 +98,7 @@ const rabbitPending=new Map();let rabbitState={foundIds:[],found:0,required:50,c
 function rabbitRequest(action,extra={}){return new Promise((resolve,reject)=>{const requestId=crypto.randomUUID();const timer=setTimeout(()=>{rabbitPending.delete(requestId);reject(new Error('The forest took too long to answer.'))},12000);rabbitPending.set(requestId,{resolve,reject,timer});send({type:'RABBIT_HOLE_REQUEST',requestId,action,...extra})})}
 window.addEventListener('message',event=>{if(event.source!==parent||event.data?.type!=='RABBIT_HOLE_RESULT')return;const pending=rabbitPending.get(event.data.requestId);if(!pending)return;clearTimeout(pending.timer);rabbitPending.delete(event.data.requestId);event.data.ok?pending.resolve(event.data.payload):pending.reject(new Error(event.data.error||'The forest stayed quiet.'))});
 function rabbitToast(text){const old=document.querySelector('.rabbit-toast');if(old)old.remove();const toast=el('div','rabbit-toast',text);document.body.append(toast);setTimeout(()=>toast.remove(),2600)}
-function rabbitModal(title,body,buttons=[]){document.querySelector('.rabbit-modal-backdrop')?.remove();const back=el('div','rabbit-modal-backdrop');const box=el('section','rabbit-modal');box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.append(el('h2','',title),el('p','',body));buttons.forEach(button=>{const b=el('button',button.secondary?'secondary':'',button.label);b.onclick=button.action;box.append(b)});const close=el('button','secondary','Close');close.onclick=()=>back.remove();box.append(close);back.append(box);document.body.append(back);box.querySelector('button')?.focus();return back}
+function rabbitModal(title,body,buttons=[]){document.querySelector('.rabbit-modal-backdrop')?.remove();const back=el('div','rabbit-modal-backdrop');const box=el('section','rabbit-modal');box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.append(el('h2','',title),el('p','',body));buttons.forEach(button=>{const b=el('button',button.secondary?'secondary':'',button.label);b.onclick=button.action;box.append(b)});const close=el('button','secondary','×');close.setAttribute('aria-label','Close');close.onclick=()=>back.remove();box.append(close);back.append(box);document.body.append(back);box.querySelector('button')?.focus();return back}
 function updateRabbitHud(){
  const count=document.getElementById('rabbitCount');
  if(count)count.textContent=`${rabbitState.found} / ${rabbitState.required}`;
@@ -124,13 +124,13 @@ async function clickRabbit(node){
  rabbitBusy=true;
  try{
   if(!rabbitChallenge||rabbitChallenge.buttonId!==id){
-   await primeRabbitChallenge(id);updateRabbitHud();rabbitToast('The secret stirred. Touch it once more.');return;
+   await primeRabbitChallenge(id);updateRabbitHud();rabbitToast('The mark stirred.');return;
   }
   const result=await rabbitRequest('find',{buttonId:id,challengeToken:rabbitChallenge.token});
   rabbitChallenge=null;rabbitState={...rabbitState,...result};updateRabbitHud();
   rabbitToast(result.newFind?`Secret ${result.found} of 50 saved.`:'You already found that secret.');
   if(result.caveUnlocked)rabbitToast('All 50 found. The cave is open.');
- }catch(error){rabbitChallenge=null;updateRabbitHud();rabbitToast('The mark could not be saved. Touch it again to retry.');}
+ }catch(error){rabbitChallenge=null;updateRabbitHud();rabbitToast('The mark could not be saved. Please try again.');}
  finally{rabbitBusy=false;}
 }
 function showDialogue(result){const dialogue=result.dialogue;if(!dialogue)return;const buttons=dialogue.choices.map(choice=>({label:choice.text,action:async()=>{try{const next=await rabbitRequest('dialogue',{node:rabbitState.lootgrem?.node||result.next||'welcome',option:choice.id});document.querySelector('.rabbit-modal-backdrop')?.remove();if(next.next==='claim'){rabbitModal('LOOTGREM waits','The one-time 500-point reward is wired but live issuance is locked during safety testing.',[{label:'Test claim gate',action:async()=>{const claim=await rabbitRequest('claim');rabbitModal('Reward safety lock',claim.message||`Status: ${claim.status}`)}}])}else{rabbitState.lootgrem={node:next.next,claimAuthorized:false};showDialogue(next)}}catch(error){rabbitToast(error.message)}}}));rabbitModal('LOOTGREM',dialogue.text,buttons)}

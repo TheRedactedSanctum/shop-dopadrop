@@ -101,7 +101,7 @@ test('all placed marks remain visible while the next mark advances and saved mar
 
     await elements['#rabbitDiscovery32'].clickHandler();
     assert.deepEqual(foundCalls, []);
-    assert.equal(elements['#rabbitDiscovery32'].label, 'Touch the mark again');
+    assert.equal(elements['#rabbitDiscovery32'].label, 'The mark stirred');
     assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-touched'), true);
     await elements['#rabbitDiscovery32'].clickHandler();
 

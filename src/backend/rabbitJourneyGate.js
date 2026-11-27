@@ -22,7 +22,7 @@ export function guardianAvailability(characterId, timeZone, now = new Date()) {
             : 'Rootwhisper appears only in the dark forest, from 6:00 pm to 6:00 am in your local time. Come back after dusk.' };
 }
 export function journeyPhase(state, location) {
-    if (!hasForestPrelude(state)) return 'forest';
+    if (!hasForestPrelude(state)) return location === 'tavern' ? 'tavern-welcome' : 'forest';
     const fragments = state.forestState?.fragments || [];
     // Existing completed encounters remain completed when this new stop is introduced.
     if (state.forestState.encounters[3] === 'tanglebright:approach') return 'reward';
@@ -57,7 +57,8 @@ export function journeySnapshot(state, location) {
         progress: { current: 0, total: 3 }, meta: ['SAVED MEMBER JOURNEY', 'NO REWARD CLAIMED'] };
     const choice = (id, label) => ({ id, label, action: 'dialogue' });
     const ready = (question, hint, choices) => ({ ...base, phase, question, hint, choices, status: { kind: 'ready', message: 'Take the trail at your own pace.' } });
-    if (phase === 'forest') return ready('The tavern path is still hidden.', 'Finish Kaylix, Rootwhisper and Grumblebark’s encounters first.', [choice('forest', 'Return to the forest')]);
+    if (phase === 'tavern-welcome') return ready('A warm hearth. An empty chair. No hurry.', 'Take a breather whenever you like. The route to the cave opens later in your journey.', [choice('rest', 'Take a seat by the hearth'), choice('forest', 'Return to the forest')]);
+    if (phase === 'forest') return ready('The cave path is still hidden.', 'Finish Kaylix, Rootwhisper and Grumblebark’s encounters first.', [choice('forest', 'Return to the forest'), choice('tavern', 'Rest in the tavern')]);
     if (phase === 'tavern-required') return ready('The cave path passes through the tavern.', 'Grumblebark told you to stop at the hearth first.', [choice('tavern', 'Go to the tavern')]);
     if (phase === 'tavern') return ready('A warm hearth. An empty chair. No hurry.', 'Behind you, Grumblebark grumbles. Ahead, the Catacombs of Glory keep their own silence. Sit for a moment before continuing.', [choice('rest', 'Take a seat by the hearth')]);
     if (phase === 'tavern-rested' || (phase === 'reward' && location === 'tavern')) return ready('Your place by the hearth is remembered.', 'When you are ready, follow the path into the cave. All 50 discoveries are required beyond this point.', [choice('cave', 'Continue into the cave'), choice('forest', 'Return to the forest')]);

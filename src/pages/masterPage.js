@@ -1,5 +1,6 @@
 import wixLocationFrontend from 'wix-location-frontend';
-import { authentication } from 'wix-members-frontend';
+import { local } from 'wix-storage-frontend';
+import { authentication, currentMember } from 'wix-members-frontend';
 import { getHuntState, getMyRabbitDashboard } from 'backend/rabbitHole.web';
 // Shared Shop-DopaDrop branding. Existing Wix store and member controls stay native.
 $w.onReady(function () {
@@ -68,12 +69,23 @@ $w.onReady(function () {
 $w.onReady(function () {
     const rabbitWidget = $w('#html2');
     if (!rabbitWidget) return;
-    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-lore-20261127';
+    rabbitWidget.src = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-widget.html?v=grimroot-tavern-welcome-20261127';
     try {
         if (typeof rabbitWidget.expand === 'function') rabbitWidget.expand();
         if (typeof rabbitWidget.show === 'function') rabbitWidget.show();
     } catch (_) { /* component visibility is controlled by the header layout */ }
     if (typeof rabbitWidget.onMessage !== 'function') return;
+    let welcomeMemberId;
+    const showSignupWelcome = async () => {
+        const member = await currentMember.getMember();
+        const age = Date.now() - new Date(member?._createdDate).getTime();
+        if (!member?._id || !(age >= 0 && age < 10 * 60 * 1000)) return;
+        if (local.getItem('dopaSignupWelcome:' + member._id)) return;
+        welcomeMemberId = member._id;
+        rabbitWidget.postMessage({ type: 'DOPA_SIGNUP_WELCOME' });
+    };
+    const checkSignupWelcome = () => showSignupWelcome().catch(() => {});
+    authentication.onLogin?.(checkSignupWelcome);
     rabbitWidget.onMessage(async event => {
         const data = event.data || {};
         if (data.type !== 'rabbit-hole-action') return;
@@ -81,6 +93,10 @@ $w.onReady(function () {
             type: 'RABBIT_WIDGET_RESULT', action: data.action, ok, payload, error
         });
         try {
+            if (data.action === 'welcome-closed') {
+                if (welcomeMemberId) local.setItem('dopaSignupWelcome:' + welcomeMemberId, 'seen');
+                return;
+            }
             if (data.action === 'sign-in') {
                 if (!authentication.loggedIn()) await authentication.promptLogin();
                 rabbitWidget.postMessage({
@@ -90,7 +106,10 @@ $w.onReady(function () {
                 return;
             }
             if (!(await authentication.loggedIn())) throw new Error('MEMBER_LOGIN_REQUIRED');
-            if (data.action === 'dashboard') reply(true, await getMyRabbitDashboard());
+            if (data.action === 'dashboard') {
+                checkSignupWelcome();
+                reply(true, await getMyRabbitDashboard());
+            }
             else if (data.action === 'dashboard-next') {
                 const dashboard = await getMyRabbitDashboard();
                 const safePath = value => typeof value === 'string' && /^\/(?!\/)/.test(value) ? value : '/';
@@ -111,6 +130,7 @@ $w.onReady(function () {
             else if (data.action === 'state') reply(true, await getHuntState());
             else if (data.action === 'enter-cave') wixLocationFrontend.to('/rabbit-hole-cave');
             else if (data.action === 'forest') wixLocationFrontend.to('/rabbit-hole-forest');
+            else if (data.action === 'tavern') wixLocationFrontend.to('/grimroot-tavern');
             else if (data.action === 'daily-clue') wixLocationFrontend.to('/rabbit-hole-daily');
         } catch (error) {
             reply(false, undefined, String(error?.message || error));

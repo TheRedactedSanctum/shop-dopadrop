@@ -30,7 +30,7 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const masterSource = read('src/pages/masterPage.js');
     const homeSource = read('src/pages/Home.c1dmp.js');
 
-    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-lore-20261127/);
+    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-tavern-welcome-20261127/);
     assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=audience-20261127/);
 });
 
@@ -174,6 +174,7 @@ test('the member dashboard renders when window.status is the browser status stri
         setAttribute() {},
         focus() {},
         querySelectorAll() { return []; },
+        addEventListener() {},
         parentElement: { setAttribute() {} },
         style: {},
         textContent: '',
@@ -181,7 +182,7 @@ test('the member dashboard renders when window.status is the browser status stri
         title: ''
     });
     const elements = Object.fromEntries(
-        ['g', 'p', 'x', 'login', 'xp', 'count', 'forest', 'daily', 'reward', 'n', 'bar', 'c', 'f', 'd', 'dashboard', 'rank', 'identity', 'badges', 'status']
+        ['g', 'p', 'x', 'login', 'xp', 'count', 'forest', 'daily', 'reward', 'n', 'bar', 'c', 'f', 'd', 'dashboard', 'rank', 'identity', 'badges', 'status', 'welcome', 'closeWelcome', 'tavern']
             .map(id => [id, makeElement(...(id === 'dashboard' ? ['dashboard', 'loading'] : []))])
     );
     const parent = { postMessage() {} };
