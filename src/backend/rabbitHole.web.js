@@ -6,7 +6,7 @@ import { accounts } from 'wix-loyalty.v2';
 import { elevate } from 'wix-auth';
 import { randomBytes } from 'crypto';
 import {
-    CAMPAIGN_START, DAILY_CONTENT, FOREST_ENCOUNTERS, LOOTGREM_DIALOGUE,
+    CAMPAIGN_START, FOREST_ENCOUNTERS, LOOTGREM_DIALOGUE,
     HUNT_STAGES, TANGLEBRIGHT_REWARD,
     REWARD_POINTS, TOTAL_BUTTONS, campaignDay, transitionLootgrem
 } from './rabbitContent';
@@ -15,8 +15,8 @@ import { rabbitActivityFacts } from './rabbitActivity';
 import { CHALLENGE_MIN_AGE_MS, issueChallenge, verifyChallenge } from './rabbitChallenge';
 import { buildRabbitDashboard } from './rabbitDashboard';
 import { buildCaveLore, buildForestDialogue, GUARDIAN_VOICES } from './encounterDialogue';
-import { availableDailyDay, factForDay } from './encounterVault';
-import { recordDailyResult } from './rabbitDailyGuard';
+import { answerCharacterRiddle, RIDDLE_KEEPERS } from './rabbitCharacterRiddles';
+import { tavernSnapshot, tavernDestination, applyTavernAction } from './rabbitTavern';
 import { beginCheckoutCodeClaim, beginRewardClaim, finalizeRewardClaim, markRewardClaimUncertain } from './rabbitReward';
 import { loadDopaProfile, memberProfileView, recordDopaActivity } from './dopaProfiles';
 
@@ -176,7 +176,9 @@ export const getForestContent = webMethod(Permissions.SiteMember, async (request
 
 export const getCaveLore = webMethod(Permissions.SiteMember, async (request = {}) => {
     const id = await memberId();
-    return buildCaveLore(await load(id), request);
+    const state = await load(id);
+    if (!['lair', 'reward'].includes(journeyPhase(state, 'cave'))) throw new Error('TAVERN_OR_CATACOMBS_REQUIRED');
+    return buildCaveLore(state, request);
 });
 
 export const forestEncounter = webMethod(Permissions.SiteMember, async (characterId, actionId, request = {}) => {
@@ -210,57 +212,57 @@ export const forestEncounter = webMethod(Permissions.SiteMember, async (characte
     return { dialogue: GUARDIAN_VOICES[characterId]?.after || encounter.line, affinity: forest.bonds[characterId], fragment: encounter.fragment, trusted: forest.bonds[characterId] >= 3, pointsAwarded: 0, stage: encounterNumber + 1 };
 });
 
+// Legacy daily route remains a trail junction (and discovery 46), never a quiz.
 export const getDailyContent = webMethod(Permissions.SiteMember, async () => {
-    const id = await memberId();
-    const state = await load(id);
-    const currentDay = campaignDay(new Date(), CAMPAIGN_START);
-    const completed = state.forestState?.completedDays || [];
-    const availableDay = availableDailyDay(currentDay, completed);
-    const day = availableDay ? DAILY_CONTENT[availableDay - 1] : null;
+    const state = await load(await memberId());
+    const count = state.forestState.encounters.length;
     return {
-        campaignStart: CAMPAIGN_START,
-        currentDay,
-        completedDays: completed,
-        entry: day ? { day: day.day, title: day.title, teaser: day.teaser, prompt: day.prompt, choices: day.choices, fact: factForDay(day.day) } : null,
-        pointsAwardedByDailyContent: 0
+        mode: 'forest', eyebrow: 'The Omens Retreat · Trail junction',
+        progress: { current: state.forestState.completedDays.length, total: 30 },
+        question: 'The riddles travel with their keepers.',
+        hint: 'Speak to Kaylix, Rootwhisper and Grumblebark in the forest, or Tanglebright in the lair. Each keeps their own part of the thirty-riddle chronicle. This junction keeps discovery 46 on its original trail.',
+        choices: [{ id: 'forest', label: 'Talk to the forest guardians', action: 'dialogue' },
+            ...(count >= 3 ? [{ id: 'tavern', label: 'Rest at the tavern', action: 'dialogue' }] : []),
+            ...(state.foundCount === 50 ? [{ id: 'cave', label: 'Follow the cave path to Tanglebright', action: 'dialogue' }] : [])],
+        meta: ['30 CHARACTER RIDDLES', 'SAVED MEMBER PROGRESS'],
+        status: { kind: 'ready', message: 'Your previously solved riddles are still collected.' }
     };
 });
 
-export const solveDailyContent = webMethod(Permissions.SiteMember, async (dayNumber, answer) => {
+// Retire the old stand-alone submission path: no alternate endpoint can bypass
+// character ownership, guardian milestones, local time or the lair journey.
+export const solveDailyContent = webMethod(Permissions.SiteMember, async () => {
+    throw new Error('RIDDLES_LIVE_WITH_CHARACTERS');
+});
+
+export const solveCharacterRiddle = webMethod(Permissions.SiteMember, async (key, day, answerIndex, request = {}) => {
     const id = await memberId();
-    let state = await load(id);
-    const currentDay = campaignDay(new Date(), CAMPAIGN_START);
-    const day = DAILY_CONTENT[Number(dayNumber) - 1];
-    if (!day || day.day > currentDay) throw new Error('CONTENT_NOT_RELEASED');
-    const completed = state.forestState.completedDays || [];
-    if (day.day > 1 && !completed.includes(day.day - 1)) throw new Error('PREVIOUS_DAY_REQUIRED');
-    const now = new Date();
-    const correct = String(answer || '').trim().toLowerCase() === day.answer.toLowerCase();
-    let guarded;
-    try {
-        guarded = recordDailyResult(state, day.day, now, correct);
-    } catch (error) {
-        if (error?.message === 'DAILY_ATTEMPT_LIMITED') {
-            throw new Error(`DAILY_ATTEMPT_LIMITED:${Math.ceil(Number(error.retryAfterMs || 0) / 1000)}`);
-        }
+    if (!RIDDLE_KEEPERS.includes(key)) throw new Error('UNKNOWN_GUARDIAN');
+    let result;
+    try { result = answerCharacterRiddle(await load(id), key, day, answerIndex, request); }
+    catch (error) {
+        if (error?.message === 'DAILY_ATTEMPT_LIMITED') throw new Error(`DAILY_ATTEMPT_LIMITED:${Math.ceil(Number(error.retryAfterMs || 0) / 1000)}`);
         throw error;
     }
-    state = guarded.state;
-    if (!correct) {
-        await save(state);
-        return { correct: false, completed: false, attemptsRemaining: guarded.remaining };
+    if (!result.alreadyCompleted) await save(result.state);
+    if (result.correct && !result.alreadyCompleted) {
+        try { await recordDopaActivity(id, rabbitActivityFacts(result.state)); }
+        catch (error) { console.error('DopaVerse character riddle activity sync failed:', error); }
     }
-    if (!completed.includes(day.day)) completed.push(day.day);
-    state.forestState.completedDays = completed.sort((a, b) => a - b);
-    if (!state.forestState.fragments.includes(day.collectible)) state.forestState.fragments.push(day.collectible);
-    await save(state);
-    try {
-        await recordDopaActivity(id, rabbitActivityFacts(state));
-    } catch (error) {
-        // Profile synchronization cannot invalidate a durable riddle completion.
-        console.error('DopaVerse daily activity sync failed:', error);
-    }
-    return { correct: true, completed: true, collectible: day.collectible, attemptsRemaining: guarded.remaining, pointsAwarded: 0 };
+    return { correct: result.correct, feedback: result.feedback, fact: result.fact, attemptsRemaining: result.attemptsRemaining, pointsAwarded: 0 };
+});
+
+export const getTavernContent = webMethod(Permissions.SiteMember, async (branch = 'hub') => tavernSnapshot(await load(await memberId()), branch));
+export const useTavern = webMethod(Permissions.SiteMember, async (action, input = {}) => {
+    const state = await load(await memberId());
+    const route = tavernDestination(state, action);
+    if (route) return { route };
+    if (action === 'resume') return tavernSnapshot(state, 'hub');
+    const result = applyTavernAction(state, action, input);
+    const saved = await save(result.state);
+    const view = tavernSnapshot(saved, result.branch);
+    view.status = { kind: 'correct', message: action === 'rest' ? 'Hearth checkpoint confirmed on your account. You can leave and return safely.' : action === 'save-notes' ? 'Your journal notes are saved to your account.' : 'Your tavern preference is saved.' };
+    return view;
 });
 
 export const claimReward = webMethod(Permissions.SiteMember, async () => {

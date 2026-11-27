@@ -30,8 +30,8 @@ test('Wix embeds use the current hosted asset cache revision', () => {
     const masterSource = read('src/pages/masterPage.js');
     const homeSource = read('src/pages/Home.c1dmp.js');
 
-    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-tavern-welcome-20261127/);
-    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=audience-20261127/);
+    assert.match(masterSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/rabbit-widget\.html\?v=grimroot-hearth-popups-20261127/);
+    assert.match(homeSource, /theredactedsanctum\.github\.io\/shop-dopadrop\/\?v=hearth-dialogue-20261127/);
 });
 
 test('the embedded Home header owns one account link and native member bars are removed', () => {
@@ -83,8 +83,9 @@ test('the compact widget has one complete document and one small login control',
 
     assert.equal(servedSource, source);
     assert.equal((source.match(/<\/html>/gi) || []).length, 1);
-    assert.equal((source.match(/<script(?:\s|>)/gi) || []).length, 2);
-    assert.equal((source.match(/<\/script>/gi) || []).length, 2);
+    assert.equal((source.match(/<script(?:\s|>)/gi) || []).length, 3);
+    assert.match(source, /src="popupGems\.js/);
+    assert.equal((source.match(/<\/script>/gi) || []).length, 3);
     assert.equal((source.match(/id=["']login["']/g) || []).length, 1);
     assert.match(source, /class="login"/);
     assert.match(source, /\.login\{[^}]*font-size:10px/);

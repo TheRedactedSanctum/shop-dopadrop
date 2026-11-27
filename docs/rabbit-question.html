@@ -61,6 +61,7 @@ h1{margin:0 0 10px;color:var(--white);font-size:clamp(24px,4.8vw,36px);line-heig
 }
 @keyframes guardian-breathe{50%{transform:translateY(-5px) rotate(.4deg)}}
 @media (prefers-reduced-motion:reduce){.choice,.progress span,.environment{transition:none}.guardian{animation:none}}
+.trail-notes{display:grid;gap:8px;margin:0 0 20px}.trail-notes[hidden],.keepsakes[hidden]{display:none}.trail-notes label{font-weight:800;color:var(--cyan)}.trail-notes textarea{width:100%;min-height:170px;resize:vertical;background:#15151d;color:#fff;border:1px solid #7b7b90;border-radius:10px;padding:12px;font:16px/1.5 Arial,sans-serif}.trail-notes textarea:focus-visible{outline:3px solid var(--yellow)}.keepsakes{max-height:280px;overflow:auto;padding:0 0 16px}.keepsakes p{border-left:3px solid var(--cyan);padding:8px 12px;margin:6px 0;font-size:14px;line-height:1.5}body.quiet .environment{filter:brightness(.3)!important}body.quiet .guardian{animation:none}body.quiet *{scroll-behavior:auto!important}.card>.popup-minimise{position:absolute;right:10px;top:8px}.eyebrow{padding-right:38px}
 </style>
 </head>
 <body>
@@ -74,12 +75,15 @@ h1{margin:0 0 10px;color:var(--white);font-size:clamp(24px,4.8vw,36px);line-heig
   <h1 id="question">Loading the forest…</h1>
   <p class="hint" id="hint"></p>
   <aside class="vault-fact" id="vaultFact" aria-label="An oddity from The Alchemist’s vault" hidden><p id="factText"></p><a id="factSource" target="_blank" rel="noopener noreferrer"></a></aside>
+  <div class="trail-notes" id="notesEditor" hidden><label for="trailNotes" id="notesLabel">My trail notes</label><textarea id="trailNotes" maxlength="1500"></textarea><small>Up to 1,500 characters. Choose Save notes to keep changes.</small></div>
+  <div class="keepsakes" id="keepsakes" hidden></div>
   <div class="choices" id="choices" role="radiogroup" aria-labelledby="question"></div>
   <p class="status" id="status" role="status" aria-live="polite"></p>
   <div class="meta"><span id="metaStart"></span><span id="metaEnd"></span></div>
 </section>
 </main>
-<script src="rabbitQuestionView.js?v=grimroot-lore-20261127"></script>
+<script src="popupGems.js?v=hearth-20261127"></script>
+<script src="rabbitQuestionView.js?v=hearth-20261127"></script>
 <script>
 const card=document.getElementById('card');
 const scene=card.parentElement;
@@ -97,6 +101,13 @@ const choices=document.getElementById('choices');
 const statusNode=document.getElementById('status');
 const metaStart=document.getElementById('metaStart');
 const metaEnd=document.getElementById('metaEnd');
+const notesEditor=document.getElementById('notesEditor');
+const trailNotes=document.getElementById('trailNotes');
+const notesLabel=document.getElementById('notesLabel');
+const keepsakes=document.getElementById('keepsakes');
+let editorRevision=0;
+let quietScene=false;
+PopupGems.attach(scene,{key:'journey-scene',title:'Journey conversation',closeParent:card});
 const stateClasses=['state-ready','state-pending','state-correct','state-incorrect','state-locked','state-completed','state-error','state-limited'];
 let pending=false;
 let currentRequestId='';
@@ -108,7 +119,7 @@ let sceneIdentity='';
 let latestArtwork=null;
 const localEnvironment=artwork=>{const hour=new Date().getHours();return hour>=6&&hour<18?artwork.environmentDay:artwork.environmentNight};
 const animateScene=async(node,frames,duration)=>{
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(quietScene||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const animation=node.animate(frames,{duration,fill:'forwards',easing:'ease-in-out'});
   try{await animation.finished}catch(_){/* A newer scene replaced this transition. */}
 };
@@ -151,10 +162,15 @@ setInterval(()=>{if(latestArtwork)environment.src=localEnvironment(latestArtwork
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&latestArtwork)environment.src=localEnvironment(latestArtwork)});
 const render=view=>{
   pending=view.status.kind==='pending';
+  quietScene=view.quiet;document.body.classList.toggle('quiet',quietScene);
+  notesEditor.hidden=!view.editor;
+  if(view.editor){text(notesLabel,view.editor.label);if(view.status.kind!=='error')trailNotes.value=view.editor.value;editorRevision=view.editor.revision;}
+  keepsakes.hidden=!view.details.length;keepsakes.replaceChildren();
+  view.details.forEach(item=>{const row=document.createElement('p');const title=document.createElement('strong');text(title,item.title);row.append(title,document.createElement('br'),document.createTextNode(item.text));keepsakes.append(row)});
   setState(view.status.kind);
   text(eyebrow,view.eyebrow);
   text(question,view.question);
-  text(hint,view.hint);
+  text(hint,view.hint+(view.checkpointAt?' Last saved at '+new Date(view.checkpointAt).toLocaleString()+'.':''));
   vaultFact.hidden=!view.fact;
   if(view.fact){text(factText,view.fact.text);text(factSource,'Source: '+view.fact.sourceTitle+' (opens in a new tab)');factSource.href=view.fact.sourceUrl}
   else{text(factText,'');text(factSource,'');factSource.removeAttribute('href')}
@@ -180,7 +196,7 @@ const render=view=>{
       setState('pending');
       text(statusNode,'The forest is listening…');
       [...choices.children].forEach(control=>{control.disabled=true;control.setAttribute('aria-checked',String(control===button))});
-      parent.postMessage({type:'RABBIT_QUESTION_ACTION',requestId:currentRequestId,action:item.action,choiceId:item.id},'*');
+      parent.postMessage({type:'RABBIT_QUESTION_ACTION',requestId:currentRequestId,action:item.action,choiceId:item.id,...(item.id==='save-notes'?{value:trailNotes.value,revision:editorRevision}:{})},'*');
     });
     choices.appendChild(button);
   });

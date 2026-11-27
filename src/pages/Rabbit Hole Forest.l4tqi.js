@@ -1,6 +1,6 @@
 import wixLocationFrontend from 'wix-location-frontend';
 import { authentication } from 'wix-members-frontend';
-import { forestEncounter, getForestContent } from 'backend/rabbitHole.web';
+import { forestEncounter, getForestContent, solveCharacterRiddle } from 'backend/rabbitHole.web';
 import { bindRabbitDiscovery } from 'public/rabbitDiscovery';
 import { bindRabbitQuestionView } from 'public/rabbitQuestionBridge';
 
@@ -22,6 +22,7 @@ $w.onReady(function () {
     const context = extra => ({ ...extra, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     let stage;
     let choiceMap = new Map();
+    let activeStory = {};
 
     const snapshot = (view, status) => {
         if (!view) {
@@ -64,7 +65,7 @@ $w.onReady(function () {
         };
     };
 
-    const load = async () => snapshot(await getForestContent(context()));
+    const load = async () => snapshot(await getForestContent(context(activeStory)));
 
     const questionView = bindRabbitQuestionView($w, {
         load,
@@ -72,11 +73,17 @@ $w.onReady(function () {
             const choice = choiceMap.get(action.choiceId);
             if (action.action !== 'encounter' || !choice) throw new Error('INVALID_FOREST_CHOICE');
             if (choice.kind === 'travel') { wixLocationFrontend.to(choice.route); return { browsing: true, next: stage }; }
-            if (choice.kind === 'story') return {
-                browsing: true,
-                next: await getForestContent(context({ guardianKey: choice.guardianKey, branch: choice.branch, cursor: choice.cursor }))
-            };
+            if (choice.kind === 'riddle') {
+                activeStory = { guardianKey: choice.guardianKey, branch: 'riddle' };
+                const outcome = await solveCharacterRiddle(choice.guardianKey, choice.day, choice.answerIndex, context());
+                return { riddle: outcome, next: await getForestContent(context({ guardianKey: choice.guardianKey, branch: 'riddle' })) };
+            }
+            if (choice.kind === 'story') {
+                activeStory = { guardianKey: choice.guardianKey, branch: choice.branch, cursor: choice.cursor };
+                return { browsing: true, next: await getForestContent(context(activeStory)) };
+            }
             try {
+                activeStory = {};
                 const outcome = await forestEncounter(choice.characterId, choice.actionId, context());
                 return { outcome, next: await getForestContent(context()) };
             } catch (error) {
@@ -87,7 +94,9 @@ $w.onReady(function () {
                 throw error;
             }
         },
-        mapResult: result => snapshot(result.next, result.browsing
+        mapResult: result => snapshot({ ...result.next, fact: result.riddle?.fact || result.next.fact }, result.riddle
+            ? { kind: result.riddle.correct ? 'correct' : 'incorrect', message: result.riddle.feedback }
+            : result.browsing
             ? { kind: 'ready', message: 'Take your time. Your saved progress has not changed.' }
             : result.next.journeyComplete
                 ? { kind: 'ready', message: 'All four guardians have answered. You can revisit their conversations.' }
@@ -96,13 +105,13 @@ $w.onReady(function () {
             : result.next.locked
                 ? { kind: 'locked', message: result.stale
                     ? 'The forest path changed. Keep discovering hidden buttons to unlock this guardian.'
-                    : `${result.outcome.dialogue} Keep discovering hidden buttons to unlock the next guardian.` }
+                    : `${result.outcome?.dialogue || ''} Keep discovering hidden buttons to unlock the next guardian.` }
                 : result.stale
                     ? { kind: 'error', message: 'The forest path changed. The current guardian has been restored.' }
-                    : { kind: 'correct', message: result.outcome.dialogue }),
-        mapError: () => snapshot(stage, {
+                    : { kind: 'correct', message: result.outcome?.dialogue || 'Your conversation is saved.' }),
+        mapError: error => snapshot(stage, {
             kind: 'error',
-            message: 'The guardian could not hear that choice. Please try again.'
+            message: /DAILY_ATTEMPT_LIMITED/.test(String(error?.message || error)) ? 'Your guardian asks for a pause. Try again in ten minutes.' : 'The guardian could not hear that choice. Please try again.'
         })
     });
     reloadForestQuestion = questionView.reload;

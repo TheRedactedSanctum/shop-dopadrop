@@ -119,31 +119,22 @@ test('the renderer keeps citations as text and accepts only credential-free HTTP
     }
 });
 
-test('Daily reveals the source after solving and advances released clues through a read, not a second answer', async () => {
-    const ready = [];
-    let options;
-    let answers = 0;
-    let complete = false;
-    const fact = { id: 'test', text: 'An oddity', sourceTitle: 'A source', sourceUrl: 'https://example.com' };
-    const $w = { onReady(fn) { ready.push(fn); } };
+test('the legacy daily junction preserves discovery binding and navigates to the character without a quiz', async () => {
+    const ready = []; let options; const destinations = []; let discoveries = 0;
+    const snapshot = { mode: 'forest', question: 'The riddles travel with their keepers.', choices: [{ id: 'forest', action: 'dialogue', label: 'Talk to the forest guardians' }] };
     const context = {
-        $w,
+        $w: { onReady(fn) { ready.push(fn); } },
         authentication: { loggedIn: () => true, onLogin() {} },
-        bindRabbitDiscovery() {},
+        wixLocationFrontend: { to(route) { destinations.push(route); } },
+        bindRabbitDiscovery() { discoveries++; },
         bindRabbitQuestionView(_w, value) { options = value; return { reload() {} }; },
-        getDailyContent: async () => ({ currentDay: 29, completedDays: complete ? [1] : [], entry: { day: complete ? 2 : 1, title: 'Clue', prompt: 'A question', teaser: 'A hint', choices: ['yes', 'no', 'maybe'], fact } }),
-        solveDailyContent: async () => { answers += 1; complete = true; return { correct: true }; }
+        getDailyContent: async () => snapshot
     };
     const source = fs.readFileSync(path.join(__dirname, '../src/pages/Rabbit Hole Daily.i6ju2.js'), 'utf8').replace(/^import .*;\r?\n/gm, '');
-    vm.runInNewContext(source, context);
-    ready.forEach(fn => fn());
-    assert.equal((await options.load()).fact, null);
-    const solved = options.mapResult(await options.submit({ action: 'answer', choiceId: 'choice-1' }));
-    assert.equal(solved.fact.id, 'test');
-    assert.equal(solved.status.kind, 'ready');
-    assert.equal(solved.choices[0].id, 'next-clue');
-    const next = options.mapResult(await options.submit({ action: 'answer', choiceId: 'next-clue' }));
-    assert.equal(next.progress.current, 2);
-    assert.equal(next.fact, null);
-    assert.equal(answers, 1);
+    vm.runInNewContext(source, context); ready.forEach(fn => fn());
+    assert.equal(discoveries, 1);
+    assert.equal(await options.load(), snapshot);
+    await options.submit({ action: 'dialogue', choiceId: 'forest' });
+    assert.deepEqual(destinations, ['/rabbit-hole-forest']);
+    await assert.rejects(options.submit({ choiceId: 'answer-1' }), /INVALID_TRAIL_CHOICE/);
 });

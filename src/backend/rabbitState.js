@@ -1,3 +1,4 @@
+import { normaliseTavern } from './rabbitTavern.js';
 const FOREST_SEQUENCE = Object.freeze([
     'mothkeeper:wait',
     'rootwhisper:protect',
@@ -48,7 +49,8 @@ export function normaliseRabbitDetails(item = {}) {
             bonds,
             fragments: stringList(forest.fragments),
             encounters: encounterPrefix(forest.encounters),
-            completedDays
+            completedDays,
+            tavern: normaliseTavern(forest.tavern)
         },
         lootgremState: {
             node,

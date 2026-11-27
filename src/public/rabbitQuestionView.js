@@ -3,7 +3,7 @@
     if (typeof module === 'object' && module.exports) module.exports = api;
     if (root) root.RabbitQuestionView = api;
 }(typeof window !== 'undefined' ? window : this, function () {
-    const MODES = Object.freeze(['daily', 'forest', 'cave']);
+    const MODES = Object.freeze(['daily', 'forest', 'cave', 'tavern']);
     const ACTION_IDS = Object.freeze(['answer', 'encounter', 'dialogue']);
     const STATUS_KINDS = Object.freeze([
         'ready', 'pending', 'correct', 'incorrect', 'locked', 'completed', 'error', 'limited'
@@ -11,6 +11,7 @@
     const IDENTIFIER = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
     const ENVIRONMENTS = Object.freeze({
         daily: 'assets/rabbit-hole/daily-tavern-v4.webp',
+        tavern: 'assets/rabbit-hole/daily-tavern-v4.webp',
         forest: 'assets/rabbit-hole/forest-night-v3.webp',
         cave: 'assets/rabbit-hole/cave-environment-v4.webp'
     });
@@ -75,7 +76,11 @@
             eyebrow: cleanText(snapshot.eyebrow, 160),
             progress: { current, total, percent: Math.min(100, Math.round((current / total) * 100)) },
             question,
-            hint: cleanText(snapshot.hint, 500),
+            hint: cleanText(snapshot.hint, 1200),
+            quiet: snapshot.quiet === true,
+            checkpointAt: snapshot.mode === 'tavern' && typeof snapshot.checkpointAt === 'string' && Number.isFinite(Date.parse(snapshot.checkpointAt)) ? snapshot.checkpointAt : null,
+            editor: snapshot.mode === 'tavern' && snapshot.editor ? { label: cleanText(snapshot.editor.label, 100), value: typeof snapshot.editor.value === 'string' ? snapshot.editor.value.slice(0, 1500) : '', revision: Math.max(0, Math.floor(Number(snapshot.editor.revision) || 0)), maxLength: 1500 } : null,
+            details: snapshot.mode === 'tavern' && Array.isArray(snapshot.details) ? snapshot.details.slice(0, 60).map(item => ({ title: cleanText(item.title, 200), text: cleanText(item.text, 300) })) : [],
             fact: cleanFact(snapshot.fact),
             choices: choices.map(choice => ({ ...choice, disabled })),
             meta,
@@ -104,6 +109,10 @@
         const action = cleanText(data.action, 32);
         const choiceId = cleanText(data.choiceId, 64);
         if (!IDENTIFIER.test(requestId) || !ACTION_IDS.includes(action) || !IDENTIFIER.test(choiceId)) return null;
+        if (choiceId === 'save-notes') {
+            if (typeof data.value !== 'string' || data.value.length > 1500 || !Number.isSafeInteger(data.revision) || data.revision < 0) return null;
+            return { type: 'RABBIT_QUESTION_ACTION', requestId, action, choiceId, value: data.value, revision: data.revision };
+        }
         return { type: 'RABBIT_QUESTION_ACTION', requestId, action, choiceId };
     }
 

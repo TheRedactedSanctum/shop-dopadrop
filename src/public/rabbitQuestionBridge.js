@@ -1,4 +1,4 @@
-export const QUESTION_VIEW_URL = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-question.html?v=grimroot-local-time-20261127';
+export const QUESTION_VIEW_URL = 'https://theredactedsanctum.github.io/shop-dopadrop/rabbit-question.html?v=grimroot-hearth-dialogue-20261127';
 
 const ACTIONS = new Set(['answer', 'encounter', 'dialogue']);
 const IDENTIFIER = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
@@ -9,6 +9,10 @@ function safeAction(data) {
     const action = String(data.action || '');
     const choiceId = String(data.choiceId || '');
     if (!IDENTIFIER.test(requestId) || !ACTIONS.has(action) || !IDENTIFIER.test(choiceId)) return null;
+    if (choiceId === 'save-notes') {
+        if (typeof data.value !== 'string' || data.value.length > 1500 || !Number.isSafeInteger(data.revision) || data.revision < 0) return null;
+        return { requestId, action, choiceId, value: data.value, revision: data.revision };
+    }
     return { requestId, action, choiceId };
 }
 

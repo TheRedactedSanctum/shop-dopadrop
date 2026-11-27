@@ -65,7 +65,7 @@
             progress: `${found} / ${required}`,
             percent: count(progress.percent, 100),
             forest: `${plural(encounters, 'encounter')} · ${plural(fragments, 'fragment')}`,
-            daily: `${completedDays} / ${count(daily.currentDay, 30)} daily riddles`,
+            daily: `${completedDays} / ${count(daily.currentDay, 30)} character riddles`,
             reward: rewardLabel(snapshot.reward),
             primary: { label: primaryLabel(snapshot, found), action: 'dashboard-next' }
         };

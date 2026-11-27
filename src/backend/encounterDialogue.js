@@ -1,3 +1,4 @@
+import { characterRiddleView } from './rabbitCharacterRiddles.js';
 import { GUARDIAN_MILESTONES } from './rabbitContent.js';
 import { buildForestStageView } from './rabbitForestView.js';
 import { WHISPER_FACTS, publicFact } from './encounterVault.js';
@@ -90,10 +91,11 @@ const storyChoice = (id, label, guardianKey, branch, cursor = 0) => ({
     id, label, kind: 'story', guardianKey, branch, cursor
 });
 
-export function guardianStory(guardianKey, request = {}) {
+export function guardianStory(guardianKey, request = {}, state = {}) {
     const voice = GUARDIAN_VOICES[guardianKey];
     if (!voice) throw new Error('UNKNOWN_GUARDIAN');
-    const branch = ['entry', 'fact', 'crew', 'guide'].includes(request.branch) ? request.branch : 'entry';
+    const branch = ['entry', 'fact', 'crew', 'guide', 'riddle'].includes(request.branch) ? request.branch : 'entry';
+    if (branch === 'riddle') return characterRiddleView(state, guardianKey, request);
     const back = storyChoice('story-back', 'Back to our conversation', guardianKey, 'entry');
     if (branch === 'fact') {
         const pool = FACT_POOLS[guardianKey];
@@ -113,6 +115,7 @@ export function guardianStory(guardianKey, request = {}) {
     return {
         prompt: voice.opening, hint: 'Stay for a conversation, or take the guardian’s next step.',
         choices: [
+            storyChoice('story-riddle', 'Ask me your riddle', guardianKey, 'riddle'),
             storyChoice('story-fact', 'Tell me something beautifully odd', guardianKey, 'fact'),
             storyChoice('story-crew', 'Who keeps the shop running?', guardianKey, 'crew'),
             storyChoice('story-guide', 'Remind me how this trail works', guardianKey, 'guide')
@@ -140,8 +143,8 @@ export function buildForestDialogue(state = {}, request = {}) {
         };
     }
     const visited = index < completed;
-    const story = guardianStory(stage.characterId, request || {});
-    const entry = !request?.branch || request.branch === 'entry' || !['fact', 'crew', 'guide'].includes(request.branch);
+    const story = guardianStory(stage.characterId, request || {}, state);
+    const entry = !request?.branch || request.branch === 'entry' || !['fact', 'crew', 'guide', 'riddle'].includes(request.branch);
     const choices = [...story.choices];
     if (entry && !visited && index === completed) choices.unshift({
         id: `${stage.characterId}-${stage.actionId}`, label: GUARDIAN_VOICES[stage.characterId].continue,
@@ -164,6 +167,8 @@ export function buildForestDialogue(state = {}, request = {}) {
 
 export function buildCaveLore(state, request = {}) {
     if (state?.foundCount !== 50) throw new Error('CAVE_LOCKED');
-    const story = guardianStory('tanglebright', request);
-    return { ...story, choices: story.choices.map(choice => ({ ...choice, action: 'dialogue' })) };
+    const story = guardianStory('tanglebright', request, state);
+    const choices = story.choices.map(choice => ({ ...choice, action: 'dialogue' }));
+    if ((!request.branch || request.branch === 'entry') && state.forestState?.encounters?.length === 3) choices.push({ id: 'approach', label: GUARDIAN_VOICES.tanglebright.continue, action: 'dialogue', kind: 'encounter' });
+    return { ...story, choices };
 }

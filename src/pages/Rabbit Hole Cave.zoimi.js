@@ -1,6 +1,6 @@
 import { authentication } from 'wix-members-frontend';
 import wixLocationFrontend from 'wix-location-frontend';
-import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode, getCaveLore, getJourneyStage, advanceJourney, forestEncounter } from 'backend/rabbitHole.web';
+import { enterCave, chooseLootgrem, claimReward, claimCheckoutCode, getCaveLore, getJourneyStage, advanceJourney, forestEncounter, solveCharacterRiddle } from 'backend/rabbitHole.web';
 import { bindRabbitQuestionView } from 'public/rabbitQuestionBridge';
 import { caveSnapshot } from 'public/rabbitCaveView';
 
@@ -12,6 +12,8 @@ $w.onReady(function () {
     let shownChoices = new Set();
     let loreView = null;
     let loreCursor = 0;
+    let loreChoices = new Map();
+    const context = extra => ({ ...extra, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     const render = status => {
         if (journeyView) { shownChoices = new Set(journeyView.choices.map(choice => choice.id)); return journeyView; }
         const snapshot = loreView ? {
@@ -23,11 +25,13 @@ $w.onReady(function () {
         } : caveSnapshot(state, dialogue, status);
         if (!loreView && snapshot.status.kind === 'ready' && !state.lootgrem?.claimAuthorized) {
             snapshot.choices.push(
+                { id: 'story-riddle', label: 'Ask me your riddle', action: 'dialogue' },
                 { id: 'story-fact', label: 'One beautifully odd thing before the offer', action: 'dialogue' },
                 { id: 'story-crew', label: 'Who keeps the shop running?', action: 'dialogue' },
                 { id: 'story-guide', label: 'Explain the final choice', action: 'dialogue' }
             );
         }
+        loreChoices = new Map((loreView?.choices || []).map(choice => [choice.id, choice]));
         shownChoices = new Set(snapshot.choices.map(choice => choice.id));
         return snapshot;
     };
@@ -52,6 +56,7 @@ $w.onReady(function () {
                 };
             }
             journeyView = await getJourneyStage('cave');
+            if (journeyView.phase === 'lair') { journeyView = null; loreView = await getCaveLore(context()); return render(); }
             if (journeyView.phase !== 'reward') return render();
             journeyView = null;
             const result = await enterCave();
@@ -68,6 +73,7 @@ $w.onReady(function () {
                 if (action.choiceId === 'approach') await forestEncounter('tanglebright', 'approach');
                 else await advanceJourney('cave', action.choiceId);
                 const journey = await getJourneyStage('cave');
+                if (journey.phase === 'lair') return { journey: null, lore: await getCaveLore(context()) };
                 if (journey.phase === 'reward') return { journey: null, state: await enterCave() };
                 return { journey };
             }
@@ -76,12 +82,21 @@ $w.onReady(function () {
                 return { state: await enterCave() };
             }
             if (action.choiceId === 'reload_cave') return { state: await enterCave() };
-            if (action.choiceId === 'story-back') return { clearLore: true };
-            if (['story-fact', 'story-crew', 'story-guide', 'story-another'].includes(action.choiceId)) {
-                const branch = action.choiceId === 'story-crew' ? 'crew'
+            const loreChoice = loreChoices.get(action.choiceId);
+            if (loreChoice?.kind === 'riddle') {
+                const outcome = await solveCharacterRiddle('tanglebright', loreChoice.day, loreChoice.answerIndex, context());
+                return { lore: await getCaveLore(context({ branch: 'riddle' })), riddle: outcome };
+            }
+            if (action.choiceId === 'approach' && loreChoice?.kind === 'encounter') {
+                await forestEncounter('tanglebright', 'approach', context());
+                return { journey: null, state: await enterCave() };
+            }
+            if (action.choiceId === 'story-back') return { lore: await getCaveLore(context()) };
+            if (['story-riddle', 'story-fact', 'story-crew', 'story-guide', 'story-another'].includes(action.choiceId)) {
+                const branch = action.choiceId === 'story-riddle' ? 'riddle' : action.choiceId === 'story-crew' ? 'crew'
                     : action.choiceId === 'story-guide' ? 'guide' : 'fact';
                 loreCursor = action.choiceId === 'story-another' ? loreCursor + 1 : 0;
-                return { lore: await getCaveLore({ branch, cursor: loreCursor }) };
+                return { lore: await getCaveLore(context({ branch, cursor: loreCursor })) };
             }
             if (action.choiceId === 'postpone_reward') {
                 // No backend write: the already-saved choice survives leaving/reloading.
@@ -99,6 +114,7 @@ $w.onReady(function () {
             if (Object.prototype.hasOwnProperty.call(result, 'journey')) journeyView = result.journey;
             if (result.clearLore) loreView = null;
             if (result.lore) loreView = result.lore;
+            if (result.riddle) { loreView.fact = result.riddle.fact; return render({ kind: result.riddle.correct ? 'correct' : 'incorrect', message: result.riddle.feedback }); }
             if (result.state) accept(result.state);
             if (result.claim) {
                 if (result.claim.status === 'disabled') return render({ kind: 'ready', message: 'Reward issuance is still disabled. Your choice is saved; no points or checkout code were issued.' });

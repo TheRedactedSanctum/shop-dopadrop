@@ -26,7 +26,7 @@ test('the gem dashboard presents member identity and progress from the safe snap
         progress: '20 / 50',
         percent: 40,
         forest: '1 encounter · 2 fragments',
-        daily: '1 / 3 daily riddles',
+        daily: '1 / 3 character riddles',
         reward: 'Treasure eligible · live points disabled',
         primary: { label: 'Find secret 21', action: 'dashboard-next' }
     });

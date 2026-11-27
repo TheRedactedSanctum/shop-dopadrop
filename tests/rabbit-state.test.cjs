@@ -1,11 +1,12 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
+const { normaliseTavern } = require('../src/backend/rabbitTavern.js');
 const { normaliseRabbitDetails } = require('../src/backend/rabbitState.js');
 
 test('missing nested hunt state receives safe complete defaults', () => {
     assert.deepEqual(normaliseRabbitDetails(), {
-        forestState: { bonds: {}, fragments: [], encounters: [], completedDays: [] },
+        forestState: { bonds: {}, fragments: [], encounters: [], completedDays: [], tavern: normaliseTavern() },
         lootgremState: { node: 'welcome', claimAuthorized: false },
         rewardStatus: 'not_eligible',
         rewardChoice: null
@@ -26,7 +27,8 @@ test('malformed forest state preserves only valid progress', () => {
         bonds: { mothkeeper: 2 },
         fragments: ['Lantern Oath', 'Seed Promise'],
         encounters: ['mothkeeper:wait'],
-        completedDays: [1, 3]
+        completedDays: [1, 3],
+        tavern: normaliseTavern()
     });
 });
 
