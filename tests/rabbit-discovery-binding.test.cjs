@@ -290,3 +290,31 @@ test('future and completed marks remain visible without granting another discove
     assert.equal(Object.values(elements).every(element => !element.collapsed), true);
     assert.equal(elements['#rabbitDiscovery32'].classes.has('dopa-discovery-found'), true);
 });
+
+test('a fast double tap saves the mark while the first tap is still arming it', async () => {
+    let issueChallenge;
+    const challenge = new Promise(resolve => { issueChallenge = resolve; });
+    const foundCalls = [];
+    const { elements, $w } = makeWixElements(['rabbitDiscovery32', 'rabbitDiscovery33', 'rabbitDiscovery34']);
+    const bind = loadBinder(baseDeps({
+        beginButtonChallenge: () => challenge,
+        findButton: async (...args) => {
+            foundCalls.push(args);
+            return { newFind: true, found: 32, required: 50 };
+        },
+        getHuntState: async () => foundCalls.length
+            ? { foundIds: [32], nextButtonId: 33, nextPage: '/about' }
+            : { foundIds: [], nextButtonId: 32, nextPage: '/about' }
+    }));
+
+    await bind($w);
+    const mark = elements['#rabbitDiscovery32'];
+    const first = mark.clickHandler();
+    await mark.clickHandler();
+    assert.deepEqual(foundCalls, []);
+    issueChallenge({ token: 'token-32' });
+    await first;
+
+    assert.deepEqual(foundCalls, [[32, '/about', 'token-32']]);
+    assert.equal(mark.classes.has('dopa-discovery-found'), true);
+});

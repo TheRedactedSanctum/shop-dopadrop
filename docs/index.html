@@ -114,24 +114,34 @@ function updateRabbitHud(){
  });
  const cave=document.getElementById('rabbitCave');if(cave)cave.disabled=!rabbitState.caveUnlocked;
 }
-async function primeRabbitChallenge(id){try{rabbitChallenge=await rabbitRequest('challenge',{buttonId:id})}catch(error){rabbitChallenge=null;throw error}}
+async function primeRabbitChallenge(id){try{const issued=await rabbitRequest('challenge',{buttonId:id});rabbitChallenge={...issued,readyAt:Date.now()+(issued.waitMs||0)}}catch(error){rabbitChallenge=null;throw error}}
 let rabbitBusy=false;
+let armingRabbitId=null;
+let rabbitSecondTapQueued=false;
 async function clickRabbit(node){
  if(rabbitState.memberReady!==true){send({type:'RABBIT_LOGIN_REQUEST'});rabbitToast('Sign up or log in to enter The Grimroot Trials.');return}
  const id=Number(node.dataset.rabbitId);
- if(rabbitBusy||rabbitState.foundIds.includes(id))return;
+ if(rabbitBusy){if(armingRabbitId===id)rabbitSecondTapQueued=true;return}
+ if(rabbitState.foundIds.includes(id))return;
  if(id!==rabbitState.nextButtonId){rabbitToast('Follow the illuminated marks in order. Open the gem for your next step.');return}
  rabbitBusy=true;
  try{
   if(!rabbitChallenge||rabbitChallenge.buttonId!==id){
+   armingRabbitId=id;
    await primeRabbitChallenge(id);updateRabbitHud();rabbitToast('The mark stirred.');return;
   }
+  const wait=rabbitChallenge.readyAt-Date.now();
+  if(wait>0)await new Promise(resolve=>setTimeout(resolve,wait));
   const result=await rabbitRequest('find',{buttonId:id,challengeToken:rabbitChallenge.token});
   rabbitChallenge=null;rabbitState={...rabbitState,...result};updateRabbitHud();
   rabbitToast(result.newFind?`Secret ${result.found} of 50 saved.`:'You already found that secret.');
   if(result.caveUnlocked)rabbitToast('All 50 found. The cave is open.');
  }catch(error){rabbitChallenge=null;updateRabbitHud();rabbitToast('The mark could not be saved. Please try again.');}
- finally{rabbitBusy=false;}
+ finally{
+  const submitQueuedTap=rabbitSecondTapQueued&&rabbitChallenge?.buttonId===id;
+  armingRabbitId=null;rabbitSecondTapQueued=false;rabbitBusy=false;
+  if(submitQueuedTap)await clickRabbit(node);
+ }
 }
 function showDialogue(result){const dialogue=result.dialogue;if(!dialogue)return;const buttons=dialogue.choices.map(choice=>({label:choice.text,action:async()=>{try{const next=await rabbitRequest('dialogue',{node:rabbitState.lootgrem?.node||result.next||'welcome',option:choice.id});document.querySelector('.rabbit-modal-backdrop')?.remove();if(next.next==='claim'){rabbitModal('LOOTGREM waits','The one-time 500-point reward is wired but live issuance is locked during safety testing.',[{label:'Test claim gate',action:async()=>{const claim=await rabbitRequest('claim');rabbitModal('Reward safety lock',claim.message||`Status: ${claim.status}`)}}])}else{rabbitState.lootgrem={node:next.next,claimAuthorized:false};showDialogue(next)}}catch(error){rabbitToast(error.message)}}}));rabbitModal('LOOTGREM',dialogue.text,buttons)}
 async function enterRabbitCave(){try{const result=await rabbitRequest('cave');rabbitState={...rabbitState,...result};showDialogue(result)}catch(error){rabbitModal('The Last Ember is sealed',error.message)}}

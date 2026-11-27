@@ -12,7 +12,7 @@ import {
 } from './rabbitContent';
 import { addFind, normaliseState, publicState } from './rabbitCore';
 import { rabbitActivityFacts } from './rabbitActivity';
-import { issueChallenge, verifyChallenge } from './rabbitChallenge';
+import { CHALLENGE_MIN_AGE_MS, issueChallenge, verifyChallenge } from './rabbitChallenge';
 import { buildRabbitDashboard } from './rabbitDashboard';
 import { buildCaveLore, buildForestDialogue, GUARDIAN_VOICES } from './encounterDialogue';
 import { availableDailyDay, factForDay } from './encounterVault';
@@ -105,7 +105,8 @@ export const beginButtonChallenge = webMethod(Permissions.SiteMember, async (but
         token: issued.token,
         buttonId: issued.buttonId,
         pagePath: issued.pagePath,
-        expiresAt: issued.expiresAt
+        expiresAt: issued.expiresAt,
+        waitMs: Math.max(0, Date.parse(issued.issuedAt) + CHALLENGE_MIN_AGE_MS - Date.now())
     };
 });
 

@@ -49,6 +49,8 @@ export async function bindRabbitDiscovery($w, options = {}) {
     let activeButtonId = null;
     let lastState = null;
     let inFlight = false;
+    let armingButtonId = null;
+    let secondTapQueued = false;
     const collapseAll = () => slots.forEach(slot => slot.button?.collapse());
     const setStatus = (slot, message) => {
         if (slot.status) slot.status.text = message;
@@ -128,9 +130,13 @@ export async function bindRabbitDiscovery($w, options = {}) {
     };
 
     availableSlots.forEach(slot => {
-        slot.button.onClick(async () => {
-            if (inFlight) return;
+        const handleTap = async () => {
+            if (inFlight) {
+                if (armingButtonId === slot.buttonId) secondTapQueued = true;
+                return;
+            }
             inFlight = true;
+            if (activeButtonId === slot.buttonId && !challenges.has(slot.buttonId)) armingButtonId = slot.buttonId;
             try {
                 if (!(await authentication.loggedIn())) {
                     await authentication.promptLogin();
@@ -146,12 +152,15 @@ export async function bindRabbitDiscovery($w, options = {}) {
                 }
                 const challenge = challenges.get(slot.buttonId);
                 if (!challenge) {
-                    challenges.set(slot.buttonId, await beginButtonChallenge(slot.buttonId, route));
+                    const issued = await beginButtonChallenge(slot.buttonId, route);
+                    challenges.set(slot.buttonId, { ...issued, readyAt: Date.now() + (issued.waitMs || 0) });
                     setLabel(slot, 'The mark stirred');
                     slot.button.customClassList?.add('dopa-discovery-touched');
                     setStatus(slot, 'The mark stirred.');
                     return;
                 }
+                const wait = challenge.readyAt - Date.now();
+                if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
                 const result = await findButton(slot.buttonId, route, challenge.token);
                 challenges.delete(slot.buttonId);
                 setStatus(slot, result.caveUnlocked
@@ -163,9 +172,14 @@ export async function bindRabbitDiscovery($w, options = {}) {
             } catch (error) {
                 retrySlot(slot, String(error?.message || error));
             } finally {
+                const submitQueuedTap = secondTapQueued && challenges.has(slot.buttonId);
+                armingButtonId = null;
+                secondTapQueued = false;
                 inFlight = false;
+                if (submitQueuedTap) await handleTap();
             }
-        });
+        };
+        slot.button.onClick(handleTap);
     });
 
     if (typeof authentication.onLogin === 'function') authentication.onLogin(() => {

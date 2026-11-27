@@ -210,8 +210,7 @@ test('native discovery signs in before protected read and recovers cancellation 
     f.recover(); await f.click();
     assert.match(f.button.label, /Grimroot mark/); assert.equal(f.counts().finds, 0);
     await Promise.all([f.click(), f.click()]);
-    assert.equal(f.counts().challengeCalls, 1); assert.equal(f.counts().finds, 0);
-    await f.click(); assert.equal(f.counts().finds, 1);
+    assert.equal(f.counts().challengeCalls, 1); assert.equal(f.counts().finds, 1);
     assert.equal(f.active().accessibility.ariaLabel, 'Grimroot Trials discovery 6, next in order');
 });
 
