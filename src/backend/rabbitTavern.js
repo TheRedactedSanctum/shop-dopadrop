@@ -43,7 +43,8 @@ export function tavernSnapshot(state, branch = 'hub') {
         hint: 'The tavern welcomes every signed-in wanderer. Kaylix: daytime, 6 am–6 pm. Rootwhisper: night, 6 pm–6 am. Then Grumblebark → this tavern → 50 discoveries → Catacombs of Glory → Tanglebright’s lair. Times follow your device’s local timezone. Doors keep their existing locks.',
         details: [
             { title: `Forest guardians · ${Math.min(completed, 3)}/3 complete`, text: 'Meet Kaylix, Rootwhisper and Grumblebark in order. Completed guardians can be revisited at their local times.' },
-            { title: state.forestState.fragments.includes('journey:tavern') ? 'Hearth checkpoint · recorded' : 'Hearth checkpoint · waiting', text: 'Rest at the hearth before continuing beyond the tavern.' },
+            { title: tavern.checkpointAt || state.forestState.fragments.includes('journey:tavern') ? 'Hearth checkpoint · recorded' : 'Hearth checkpoint · waiting', text: 'Rest whenever you like to confirm a checkpoint on your account.' },
+            { title: hasForestPrelude(state) ? 'Cave departure · forest encounters complete' : 'Cave departure · forest encounters pending', text: hasForestPrelude(state) ? 'Rest after Grumblebark to record the onward journey stop.' : 'Enjoy the tavern now; return after Grumblebark before taking the cave path.' },
             { title: `${found}/50 discoveries`, text: found < 50 ? 'Find the remaining marks to unseal the catacombs.' : 'Every discovery is saved.' },
             { title: state.forestState.fragments.includes('journey:catacombs') ? 'Catacombs of Glory · crossed' : 'Catacombs of Glory · ahead', text: 'The old passages lead deeper into the cave.' },
             { title: completed === 4 ? 'Tanglebright · encountered' : 'Tanglebright · waiting in the lair', text: 'The final antagonist remains beyond the catacombs.' }

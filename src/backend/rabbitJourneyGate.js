@@ -2,6 +2,13 @@
 // This is a story pacing rule, not a location-verification or reward control.
 export const TAVERN_ROUTE = '/grimroot-tavern';
 const FIRST_THREE = ['mothkeeper:wait', 'rootwhisper:protect', 'grumblebark:listen'];
+const GUARDIAN_NAMES = { mothkeeper: 'Kaylix', rootwhisper: 'Rootwhisper', grumblebark: 'Grumblebark' };
+function availableRevisits(state, request, now) {
+    return FIRST_THREE.filter((key, index) => state.forestState?.encounters?.[index] === key)
+        .map(key => key.split(':')[0])
+        .filter(key => guardianAvailability(key, request.timeZone, now).available)
+        .map(key => ({ id: `revisit-${key}`, label: `Visit ${GUARDIAN_NAMES[key]}`, kind: 'story', guardianKey: key, branch: 'entry' }));
+}
 export function hasForestPrelude(state) {
     return FIRST_THREE.every((key, i) => state.forestState?.encounters?.[i] === key);
 }
@@ -36,7 +43,7 @@ export function forestJourneyView(view, state, request = {}, now = new Date()) {
         ...view, guardian: null, completed: false, locked: false,
         prompt: 'Grumblebark has opened the path to the tavern.',
         hint: 'Take a breath by the hearth. Beyond the tavern lie the cave, the Catacombs of Glory, and Tanglebright’s lair.',
-        choices: [{ id: 'travel-tavern', label: 'Enter the tavern', kind: 'travel', route: TAVERN_ROUTE }]
+        choices: [{ id: 'travel-tavern', label: 'Enter the tavern', kind: 'travel', route: TAVERN_ROUTE }, ...availableRevisits(state, request, now)]
     };
     if (view.guardian?.id === 'tanglebright') return {
         ...view, guardian: null, locked: false, completed: false,
@@ -45,7 +52,8 @@ export function forestJourneyView(view, state, request = {}, now = new Date()) {
     };
     const availability = guardianAvailability(view.guardian?.id, request.timeZone, now);
     if (!availability.available) return {
-        ...view, guardian: null, locked: true, choices: [], prompt: availability.message,
+        ...view, guardian: null, locked: availableRevisits(state, request, now).length === 0,
+        choices: availableRevisits(state, request, now), prompt: availability.message,
         hint: 'Your saved discoveries and completed encounters remain safe. The forest changes with your local day and night.'
     };
     return view;

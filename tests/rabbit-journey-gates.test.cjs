@@ -16,9 +16,24 @@ test('unavailable guardians and Tanglebright never leak their portraits or actio
     const s=state();
     const view={guardian:{id:'rootwhisper'},choices:[{id:'protect'}]};
     const nightGate=forestJourneyView(view,s,{guardianKey:'rootwhisper',timeZone:'Australia/Sydney'},new Date('2026-11-27T01:00:00Z'));
-    assert.equal(nightGate.guardian,null);assert.deepEqual(nightGate.choices,[]);
+    assert.equal(nightGate.guardian,null);
+    assert.deepEqual(nightGate.choices.map(choice => choice.guardianKey), ['mothkeeper', 'grumblebark']);
+    assert.ok(nightGate.choices.every(choice => choice.kind === 'story'));
     const trail=forestJourneyView({guardian:{id:'tanglebright'}},s,{});
     assert.equal(trail.guardian,null);assert.equal(trail.choices[0].route,'/grimroot-tavern');
+});
+test('an asleep current guardian does not trap the player away from completed keepers’ riddles', () => {
+    const s=state();s.forestState.encounters=['mothkeeper:wait'];
+    const request={timeZone:'Australia/Sydney'};
+    const now=new Date('2026-11-27T01:00:00Z');
+    const view=forestJourneyView({guardian:{id:'rootwhisper'},choices:[]},s,request,now);
+    assert.equal(view.locked,false);assert.equal(view.guardian,null);
+    assert.equal(view.choices[0].guardianKey,'mothkeeper');
+    const hub=forestJourneyView({guardian:{id:'tanglebright'}},state(),request,now);
+    assert.deepEqual(hub.choices.map(choice=>choice.id),['travel-tavern','revisit-mothkeeper','revisit-grumblebark']);
+    const first=state();first.forestState.encounters=[];
+    const sleeping=forestJourneyView({guardian:{id:'mothkeeper'}},first,{timeZone:'Europe/London'},now);
+    assert.equal(sleeping.locked,true);assert.deepEqual(sleeping.choices,[]);
 });
 test('tavern, 50 discoveries, catacombs, lair order cannot be skipped',()=>{
     const s=state();
