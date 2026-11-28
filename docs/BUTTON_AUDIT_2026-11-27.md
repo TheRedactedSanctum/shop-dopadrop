@@ -33,7 +33,7 @@ not a claim of individual interaction tests on all 701 product pages.
 ## Remaining access-dependent checks
 
 1. Forest: Find secret 45 opens the existing Guest Area password gate. The test member remains at 44/50. Live claims 45–50, guardian dialogue, Daily and the finale cannot be verified through that gate without its password.
-2. Member-page access: the active test member has no assigned roles, is not pending and is not blocked. Home Account, the native Wix menu and the account tab URLs all reach Access Restricted. The Wix Member Pages Access matrix confirms that All members is unchecked for Account Settings, My Orders, My Rewards and Notifications (and Events). The four basic self-service corrections are staged in Wix with Save enabled, but have NOT been saved; fresh confirmation is needed before applying them. Events and the existing Loyalty permission are unchanged.
+2. Member-page access: the four approved self-service page corrections were saved on 28 November 2026 and verified after reloading the settings. Account Settings, My Orders, My Rewards and Notifications loaded in the owner session. Verification in an ordinary-member session remains pending.
 3. Final rewards: Wix Loyalty remains the reward provider and the existing live reward-issuance switch remains disabled. No points or checkout reward have been issued by these tests.
 4. Mobile: a full mobile Preview hit-test pass is still pending; desktop live checks and CSS touch-target constraints are verified separately.
 
@@ -43,18 +43,17 @@ The Editor retains template guidance/placeholders on Refund and Accessibility,
 and Home contains an old October launch schedule. These were outside this
 button repair and require a separate content pass using the approved policies.
 
-## Approval-ready continuation
+## Member-page verification update — 28 November 2026
 
-The pending Save would enable All members for exactly four existing private
-member pages: Account Settings, My Orders, My Rewards and Notifications.
-This is signed-in member access, not public visitor access. Re-check the saved
-permissions and the test member's Account/Rewards/Orders/Notifications after
-approval. Then continue from the existing Forest password gate at discovery 45.
+The four approved corrections are saved and persisted after reload. Account
+Settings rendered its form, My Orders rendered its empty history, Notifications
+rendered its empty state, and My Rewards rendered Wix Loyalty rewards. My Orders
+initially appeared blank before its embedded app finished loading.
 
-The original password is unchanged. The final test cart is empty. The live
-dashboard widget was verified using revision `buttons-20261127`: 44/50 remained
-saved and Log in was hidden for the signed-in test member.
-
+These are owner-session rendering checks. An ordinary-member retest remains
+pending. No account identifiers, credentials or individual role assignments are
+included in this update. The earlier 44/50 checkpoint is historical; subsequent
+encounter changes need their own current verification.
 
 ## Grimroot Trials release — 27 November 2026
 
